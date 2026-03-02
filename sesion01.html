@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sesión 1 - Planeación Detallada</title>
+    <style>
+        :root {
+            --primary: #1a237e; /* Azul académico */
+            --secondary: #0277bd; /* Azul claro */
+            --accent: #f57f17; /* Naranja para resaltar */
+            --text: #212121;
+            --bg: #f5f5f5;
+            --white: #ffffff;
+            --border: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Roboto', 'Segoe UI', Helvetica, sans-serif;
+            line-height: 1.5;
+            color: var(--text);
+            background-color: var(--bg);
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Contenedor Principal (Hoja) */
+        .page-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--white);
+            padding: 40px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative; /* Para el footer */
+        }
+
+        /* Encabezado */
+        header {
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-logo {
+            font-size: 24pt;
+            font-weight: 900;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .header-info {
+            text-align: right;
+            font-size: 10pt;
+            color: #555;
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 18pt;
+            margin-top: 0;
+            border-left: 5px solid var(--accent);
+            padding-left: 15px;
+        }
+
+        h2 {
+            color: var(--secondary);
+            font-size: 14pt;
+            margin-top: 25px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 5px;
+        }
+
+        /* Tablas de Datos */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 10pt;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: #e8eaf6;
+            color: var(--primary);
+            font-weight: bold;
+            width: 25%;
+        }
+
+        /* Fases de la Secuencia Didáctica */
+        .fase-box {
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: #fff;
+        }
+
+        .fase-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .time-badge {
+            background-color: var(--accent);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+        }
+
+        .activity-title {
+            font-weight: bold;
+            color: var(--secondary);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .cognitive-process {
+            font-style: italic;
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: block;
+        }
+
+        /* Iconos Simples (CSS puro) */
+        .bullet {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: var(--secondary);
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        /* Pie de Página para Impresión */
+        .footer-print {
+            display: none;
+            text-align: center;
+            font-size: 9pt;
+            color: #777;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+            width: 100%;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            background: white;
+        }
+
+        /* MEDIOS DE IMPRESIÓN */
+        @media print {
+            body {
+                background: none;
+                padding: 0;
+                margin: 0;
+                -webkit-print-color-adjust: exact;
+            }
+
+            .page-container {
+                box-shadow: none;
+                padding: 0; /* Márgenes manejados por el navegador */
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .footer-print {
+                display: block;
+            }
+
+            /* Evitar cortes feos en tablas o cajas */
+            table, .fase-box, tr {
+                page-break-inside: avoid;
+            }
+
+            /* Configuración de página */
+            @page {
+                margin: 1.5cm;
+                margin-bottom: 2cm; /* Espacio para el footer */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-container">
+        <header>
+            <div class="header-logo">PTEL</div>
+            <div class="header-info">
+                <strong>Programa de Pensamiento Matemático</strong><br>
+                Facilitador: José Manuel González Vargas<br>
+                Ciclo: 2025 - Semestre VI
+            </div>
+        </header>
+
+        <h1>Plan de Sesión 1: Fundamentos Estocásticos</h1>
+
+        <table>
+            <tr>
+                <th>Asignatura</th>
+                <td>Probabilidad y Estadística II</td>
+                <th>Duración</th>
+                <td>45 Minutos</td>
+            </tr>
+            <tr>
+                <th>Bloque I</th>
+                <td>Probabilidad</td>
+                <th>Tema</th>
+                <td>Encuadre y Conceptos Básicos (Experimento, Espacio Muestral, Evento).</td>
+            </tr>
+            <tr>
+                <th>Aprendizaje Esperado</th>
+                <td colspan="3">Distingue los elementos probabilísticos (Experimento, espacio muestral y evento) en situaciones reales e hipotéticas de la vida cotidiana.</td>
+            </tr>
+            <tr>
+                <th>Competencias Genéricas</th>
+                <td colspan="3">CG5.2 Ordena información de acuerdo a categorías, jerarquías y relaciones[cite: 96].</td>
+            </tr>
+        </table>
+
+        <h2>Secuencia Didáctica</h2>
+
+        <div class="fase-box" style="border-left: 4px solid var(--secondary);">
+            <div class="fase-header">
+                <span>1. APERTURA / ENCUADRE</span>
+                <span class="time-badge">10 min</span>
+            </div>
+            <div>
+                <span class="activity-title"><span class="bullet"></span>Dinámica "Certeza vs. Incertidumbre"</span>
+                <p>
+                    <strong>Actividad:</strong> El docente lanza dos preguntas detonadoras: 
+                    <em>"¿Qué es seguro que pase hoy?"</em> vs <em>"¿Qué es posible que pase hoy?"</em>.
+                    Se presenta el <strong>Encuadre del Curso</strong> (Criterios de evaluación, portafolio de evidencias [cite: 184]).
+                </p>
+                <p>
+                    <strong>Fundamento Psicológico:</strong> Activación de conocimientos previos y reducción de ansiedad mediante la clarificación de reglas (Encuadre).
+                </p>
+                <span class="cognitive-process">Evaluación Diagnóstica: Lluvia de ideas rápida.</span>
+            </div>
+        </div>
+
+        <div class="fase-box" style="border-left: 4px solid var(--primary);">
+            <div class="fase-header">
+                <span>2. DESARROLLO / GESTIÓN DEL CONOCIMIENTO</span>
+                <span class="time-badge">25 min</span>
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <span class="activity-title"><span class="bullet"></span>Construcción de Conceptos (Mapa Cognitivo)</span>
+                <p>
+                    Mediante técnica expositiva-interactiva, se definen y diferencian los tres pilares del bloque:
+                </p>
+                <ul style="margin-top:5px; margin-bottom:10px; padding-left:20px;">
+                    <li><strong>Experimento Determinista vs. Aleatorio:</strong> Ejemplo de "Soltar una piedra" (física) vs. "Lanzar un dado" (azar).</li>
+                    <li><strong>Espacio Muestral (S):</strong> El conjunto de <em>todos</em> los resultados posibles. Visualización: Ω.</li>
+                    <li><strong>Evento (E):</strong> Un subconjunto específico de interés.</li>
+                </ul>
+            </div>
+
+            <div>
+                <span class="activity-title"><span class="bullet"></span>Práctica Guiada: "El Laboratorio del Azar"</span>
+                <p>
+                    <strong>Actividad:</strong> Se presenta un caso simple en pizarra: <em>"Lanzamiento de dos monedas"</em>.
+                    Los estudiantes deben listar el Espacio Muestral (S = {AA, AS, SA, SS}) y identificar un Evento (E = "Que salga al menos una Águila").
+                </p>
+                <p>
+                    <strong>Estrategia Andragógica:</strong> Uso de ejemplos cotidianos (monedas, juegos) para anclar conceptos abstractos.
+                </p>
+            </div>
+        </div>
+
+        <div class="fase-box" style="border-left: 4px solid var(--accent);">
+            <div class="fase-header">
+                <span>3. CIERRE / EVALUACIÓN</span>
+                <span class="time-badge">10 min</span>
+            </div>
+            <div>
+                <span class="activity-title"><span class="bullet"></span>Ticket de Salida (Assessment)</span>
+                <p>
+                    Los estudiantes resuelven un ejercicio rápido en una ficha: 
+                    <em>"Define el espacio muestral de los días de la semana y el evento 'días que asisto a la escuela'."</em>
+                </p>
+                <span class="cognitive-process">Metacognición: Verificación inmediata del logro del aprendizaje esperado.</span>
+            </div>
+        </div>
+
+        <table>
+            <tr>
+                <th>Recursos Didácticos</th>
+                <th>Producto de la Sesión</th>
+            </tr>
+            <tr>
+                <td>Pintarrón, plumones de colores (para diferenciar conjuntos), monedas (físicas o digitales), proyector (opcional).</td>
+                <td>Apunte estructurado con definiciones y el "Ticket de Salida" resuelto.</td>
+            </tr>
+        </table>
+
+    </div>
+
+    <div class="footer-print">
+        &copy; JMGV-PTEL-2025. todos los derechos reservados
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planeación Didáctica - Probabilidad y Estadística II</title>
+    <style>
+        :root {
+            --primary-color: #003366; /* Azul Institucional Profesional */
+            --secondary-color: #f0f0f0;
+            --accent-color: #cc0000;
+            --text-color: #333;
+            --border-color: #ccc;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: var(--text-color);
+            line-height: 1.4;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+        }
+
+        /* Contenedor principal para visualización web */
+        .container {
+            max-width: 210mm; /* Ancho A4 */
+            margin: 20px auto;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            background: white;
+            position: relative;
+            padding-bottom: 60px; /* Espacio para footer en web */
+        }
+
+        /* Estilos de Tabla */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            page-break-inside: auto;
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 8px;
+            text-align: left;
+            font-size: 11pt;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Encabezados y Secciones */
+        h1, h2, h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+
+        h1 { font-size: 18pt; text-transform: uppercase; text-align: center; border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; }
+        h2 { font-size: 14pt; margin-top: 15px; background-color: var(--secondary-color); padding: 5px; border-left: 5px solid var(--accent-color); }
+        .header-info { display: flex; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px double #999; padding-bottom: 10px; }
+        .info-col { width: 48%; font-size: 10pt; }
+        .info-label { font-weight: bold; color: var(--primary-color); }
+
+        /* Pie de Página Fijo */
+        .print-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 30px;
+            text-align: center;
+            font-size: 9pt;
+            color: #666;
+            background-color: white;
+            border-top: 1px solid #ddd;
+            padding-top: 5px;
+            display: none; /* Oculto en web normal, visible en print */
+        }
+
+        /* Botón de Impresión (solo visible en pantalla) */
+        .no-print-btn {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: var(--accent-color);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Lógica de Impresión (PDF) */
+        @media print {
+            @page {
+                size: A4;
+                margin: 1.5cm 1.5cm 2cm 1.5cm; /* Margen inferior amplio para footer */
+            }
+
+            body {
+                background-color: white;
+                -webkit-print-color-adjust: exact;
+            }
+
+            .container {
+                box-shadow: none;
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .no-print-btn { display: none; }
+
+            /* Forzar aparición del footer en cada página */
+            .print-footer {
+                display: block;
+                position: fixed;
+                bottom: 0;
+            }
+
+            /* Evitar cortes feos */
+            table { page-break-inside: auto; }
+            tr { page-break-inside: avoid; }
+            h2 { page-break-after: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="no-print-btn" onclick="window.print()">🖨️ Guardar como PDF / Imprimir</div>
+
+    <div class="container">
+        <header>
+            <h1>Planeación Didáctica Semestral</h1>
+            <div class="header-info">
+                <div class="info-col">
+                    <div><span class="info-label">Asignatura:</span> Probabilidad y Estadística II [cite: 6]</div>
+                    <div><span class="info-label">Programa:</span> DGB/DCA/06-2018 [cite: 15]</div>
+                    <div><span class="info-label">Semestre:</span> Sexto [cite: 8]</div>
+                    <div><span class="info-label">Duración:</span> 15 Semanas (45 Sesiones)</div>
+                </div>
+                <div class="info-col">
+                    <div><span class="info-label">Docente:</span> José Manuel González Vargas</div>
+                    <div><span class="info-label">Horario:</span> 3 Sesiones/semana (45 min c/u)</div>
+                    <div><span class="info-label">Enfoque:</span> Competencias y Pensamiento Estocástico [cite: 72]</div>
+                </div>
+            </div>
+            
+            <div style="font-size: 10pt; margin-bottom: 15px; font-style: italic;">
+                <strong>Propósito General:</strong> Desarrollar el pensamiento lógico-matemático mediante el análisis de eventos probabilísticos en situaciones contextualizadas para la toma de decisiones[cite: 71].
+            </div>
+        </header>
+
+        <h2>BLOQUE I: PROBABILIDAD (Semanas 1-6) [cite: 84]</h2>
+        <p style="font-size: 10pt;"><strong>Propósito:</strong> Utiliza los principios y técnicas de conteo en el análisis de datos estadísticos[cite: 121].</p>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 8%;">Sem.</th>
+                    <th style="width: 8%;">Ses.</th>
+                    <th style="width: 35%;">Tema / Conocimientos [cite: 125]</th>
+                    <th style="width: 49%;">Estrategia Didáctica y Actividades (Andragogía)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td rowspan="3">1</td>
+                    <td>1</td>
+                    <td>Encuadre y Conceptos Básicos<br><small>Experimento, espacio muestral, evento</small></td>
+                    <td><strong>Diagnóstico:</strong> Lluvia de ideas sobre "Riesgo e Incertidumbre" en la vida diaria. Definición colaborativa de conceptos clave.</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Teoría de Conjuntos (I)<br><small>Unión e Intersección</small></td>
+                    <td><strong>Visualización:</strong> Uso de Diagramas de Venn con situaciones reales (ej. características de los alumnos).</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Teoría de Conjuntos (II)<br><small>Diferencia y Complemento</small></td>
+                    <td><strong>Práctica:</strong> Resolución de problemas contextualizados (mercado, preferencias).</td>
+                </tr>
+                <tr>
+                    <td rowspan="3">2</td>
+                    <td>4</td>
+                    <td>Técnicas de Conteo: Diagrama de Árbol</td>
+                    <td><strong>Modelado:</strong> Construcción paso a paso de árboles de decisión en el pizarrón.</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>Principio Multiplicativo y Aditivo</td>
+                    <td><strong>Aprendizaje Basado en Problemas (ABP):</strong> Cálculo de opciones de menú o vestimenta.</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>Taller de Conjuntos y Árboles</td>
+                    <td><strong>Trabajo Colaborativo:</strong> Resolución de problemario en equipos (Peer Instruction).</td>
+                </tr>
+                <tr>
+                    <td rowspan="3">3</td>
+                    <td>7</td>
+                    <td>Permutaciones (Introducción)</td>
+                    <td><strong>Gamificación:</strong> Dinámica de ordenar elementos físicos en el aula. Diferencia "Orden importa".</td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td>Permutaciones con repetición</td>
+                    <td><strong>Análisis de Casos:</strong> Problemas de anagramas y códigos de seguridad.</td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td>Combinaciones (Introducción)</td>
+                    <td><strong>Comparación:</strong> Cuadro comparativo Permutación vs Combinación. Ejemplos de lotería/grupos.</td>
+                </tr>
+                <tr>
+                    <td rowspan="3">4</td>
+                    <td>10</td>
+                    <td>Cálculo de Combinaciones Complejas</td>
+                    <td><strong>Resolución de Problemas:</strong> Ejercicios tipo examen de ingreso a nivel superior.</td>
+                </tr>
+                <tr>
+                    <td>11</td>
+                    <td>Eventos Mutuamente Excluyentes</td>
+                    <td><strong>Análisis Crítico:</strong> Debate sobre situaciones que no pueden ocurrir simultáneamente.</td>
+                </tr>
+                <tr>
+                    <td>12</td>
+                    <td>Eventos Independientes y Dependientes</td>
+                    <td><strong>Simulación:</strong> Uso de urnas o cartas (con y sin reemplazo) para visualizar la dependencia.</td>
+                </tr>
+                <tr>
+                    <td rowspan="3">5</td>
+                    <td>13</td>
+                    <td>Probabilidad Clásica vs Frecuencial</td>
+                    <td><strong>Experimentación:</strong> Lanzamiento de monedas/dados y registro de frecuencias relativas.</td>
+                </tr>
+                <tr>
+                    <td>14</td>
+                    <td>Axiomas de Probabilidad</td>
+                    <td><strong>Formalización:</strong> Estructuración matemática de los hallazgos empíricos previos.</td>
+                </tr>
+                <tr>
+                    <td>15</td>
+                    <td>Repaso Bloque I</td>
+                    <td><strong>Metacognición:</strong> Mapa mental integrador de técnicas de conteo y probabilidad básica.</td>
+                </tr>
+                <tr>
+                    <td rowspan="3">6</td>
+                    <td>16</td>
+                    <td><strong>Evaluación Parcial Bloque I</strong></td>
+                    <td>Evaluación sumativa individual (Problemas de aplicación).</td>
+                </tr>
+                <tr>
+                    <td>17</td>
+                    <td>Retroalimentación de Evaluación</td>
+                    <td><strong>Evaluación Formativa:</strong> Corrección grupal y análisis de errores comunes.</td>
+                </tr>
+                <tr>
+                    <td>18</td>
+                    <td>Introducción al Bloque II</td>
+                    <td>Lectura previa: ¿Qué es una distribución? (Flipped Classroom).</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>BLOQUE II: DISTRIBUCIONES DE PROBABILIDAD (Semanas 7-11) [cite: 132]</h2>
+        <p style="font-size: 10pt;"><strong>Propósito:</strong> Aplica distribuciones (Bernoulli, Binomial, Normal) para inferencias y toma de decisiones[cite: 136].</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 8%;">Sem.</th>
+                    <th style="width: 8%;">Ses.</th>
+                    <th style="width: 35%;">Tema / Conocimientos [cite: 141]</th>
+                    <th style="width: 49%;">Estrategia Didáctica y Actividades</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td rowspan="3">7</td>
+                    <td>19</td>
+                    <td>Variables Aleatorias (Discretas vs Continuas)</td>
+                    <td><strong>Clasificación:</strong> Ejercicios de identificación de variables en el contexto escolar y laboral.</td>
+                </tr>
+                <tr>
+                    <td>20</td>
+                    <td>Distribución de Bernoulli</td>
+                    <td><strong>Micro-lección:</strong> Análisis de experimentos de "Éxito/Fracaso".</td>
+                </tr>
+                <tr>
+                    <td>21</td>
+                    <td>Distribución Binomial: Concepto</td>
+                    <td><strong>Deducción:</strong> Generalización de Bernoulli a 'n' ensayos. Uso de fórmula.</td>
+                </tr>
+                <tr>
+                    <td rowspan="3">8</td>
+                    <td>22</td>
+                    <td>Distribución Binomial: Tablas y Cálculo</td>
+                    <td><strong>Uso de Herramientas:</strong> Manejo de tablas estadísticas y calculadoras científicas.</td>
+                </tr>
+                <tr>
+                    <td>23</td>
+                    <td>Gráficas de Distribución Binomial</td>
+                    <td><strong>Tecnología:</strong> Uso de Excel/GeoGebra para visualizar cómo cambia la gráfica con 'p' y 'n'.</td>
+                </tr>
+                <tr>
+                    <td>24</td>
+                    <td>Aplicación Binomial en Contexto</td>
+                    <td><strong>Estudio de Caso:</strong> Control de calidad en producción (Ingeniería).</td>
+                </tr>
+                <tr>
+                    <td rowspan="3">9</td>
+                    <td>25</td>
+                    <td>Distribución Normal: Propiedades</td>
+                    <td><strong>Análisis Gráfico:</strong> La Campana de Gauss. Media y desviación estándar en la gráfica.</td>
+                </tr>
+                <tr>
+                    <td>26</td>
+                    <td>Distribución Normal Estándar (Z)</td>
+                    <td><strong>Procedimental:</strong> Estandarización de variables. Fórmula Z = (x - μ) / σ.</td>
+                </tr>
+                <tr>
+                    <td>27</td>
+                    <td>Uso de Tabla Z (Área bajo la curva)</td>
+                    <td><strong>Práctica Guiada:</strong> Búsqueda de áreas y probabilidades en tablas Z.</td>
+                </tr>
+                <tr>
+                    <td rowspan="3">10</td>
+                    <td>28</td>
+                    <td>Cálculo de Probabilidades Normales (I)</td>
+                    <td><strong>Resolución:</strong> Problemas directos (Dado Z, encontrar probabilidad).</td>
+                </tr>
+                <tr>
+                    <td>29</td>
+                    <td>Cálculo de Probabilidades Normales (II)</td>
+                    <td><strong>Resolución Inversa:</strong> Dada la probabilidad, encontrar el valor de la variable.</td>
+                </tr>
+                <tr>
+                    <td>30</td>
+                    <td>Problemas de Aplicación Normal</td>
+                    <td><strong>Contexto:</strong> Estaturas, pesos, puntajes de exámenes (fenómenos naturales y sociales).</td>
+                </tr>
+                <tr>
+                    <td rowspan="3">11</td>
+                    <td>31</td>
+                    <td>Taller Integrador Bloque II</td>
+                    <td><strong>Trabajo en Equipo:</strong> Resolución de un set de problemas mixtos (Binomial vs Normal).</td>
+                </tr>
+                <tr>
+                    <td>32</td>
+                    <td><strong>Evaluación Parcial Bloque II</strong></td>
+                    <td>Examen escrito y entrega de problemario.</td>
+                </tr>
+                <tr>
+                    <td>33</td>
+                    <td>Retroalimentación y Cierre Bloque II</td>
+                    <td>Revisión de resultados y aclaración de dudas.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>BLOQUE III: MODELOS PROBABILÍSTICOS (Semanas 12-15) [cite: 147]</h2>
+        <p style="font-size: 10pt;"><strong>Propósito:</strong> Relaciona métodos probabilísticos (Condicional, Bayes, Poisson) con situaciones cotidianas[cite: 151].</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 8%;">Sem.</th>
+                    <th style="width: 8%;">Ses.</th>
+                    <th style="width: 35%;">Tema / Conocimientos [cite: 156]</th>
+                    <th style="width: 49%;">Estrategia Didáctica y Actividades</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td rowspan="3">12</td>
+                    <td>34</td>
+                    <td>Probabilidad Condicional</td>
+                    <td><strong>Análisis Lógico:</strong> "¿Cómo cambia la probabilidad si sé que ya ocurrió B?". Fórmulas.</td>
+                </tr>
+                <tr>
+                    <td>35</td>
+                    <td>Probabilidad Condicional: Tablas de Contingencia</td>
+                    <td><strong>Manejo de Datos:</strong> Extracción de probabilidades condicionales desde tablas de datos reales.</td>
+                </tr>
+                <tr>
+                    <td>36</td>
+                    <td>Teorema de Bayes (Introducción)</td>
+                    <td><strong>Andamiaje:</strong> Del diagrama de árbol a la fórmula de Bayes. Inferencia.</td>
+                </tr>
+                <tr>
+                    <td rowspan="3">13</td>
+                    <td>37</td>
+                    <td>Teorema de Bayes (Aplicación)</td>
+                    <td><strong>Casos Médicos/Tecnológicos:</strong> Falsos positivos en pruebas, detección de spam.</td>
+                </tr>
+                <tr>
+                    <td>38</td>
+                    <td>Distribución de Poisson: Concepto</td>
+                    <td><strong>Definición:</strong> Eventos raros en un intervalo de tiempo/espacio. Diferencia con Binomial.</td>
+                </tr>
+                <tr>
+                    <td>39</td>
+                    <td>Cálculo con Poisson</td>
+                    <td><strong>Práctica:</strong> Uso de fórmula y tablas para problemas de colas de espera o defectos.</td>
+                </tr>
+                <tr>
+                    <td rowspan="3">14</td>
+                    <td>40</td>
+                    <td>Comparativa de Modelos</td>
+                    <td><strong>Pensamiento Crítico:</strong> ¿Qué modelo usar? (Binomial vs Poisson vs Normal vs Bayes).</td>
+                </tr>
+                <tr>
+                    <td>41</td>
+                    <td>Proyecto Final: Fase 1 (Planteamiento)</td>
+                    <td><strong>Aprendizaje Basado en Proyectos:</strong> Selección de un problema real para aplicar un modelo.</td>
+                </tr>
+                <tr>
+                    <td>42</td>
+                    <td>Proyecto Final: Fase 2 (Desarrollo)</td>
+                    <td><strong>Tutoría:</strong> Trabajo en aula con asesoría del docente para cálculos e interpretación.</td>
+                </tr>
+                <tr>
+                    <td rowspan="3">15</td>
+                    <td>43</td>
+                    <td>Presentación de Proyectos</td>
+                    <td><strong>Comunicación:</strong> Exposición breve de hallazgos y toma de decisiones basada en datos.</td>
+                </tr>
+                <tr>
+                    <td>44</td>
+                    <td><strong>Evaluación Final (Bloque III / Global)</strong></td>
+                    <td>Evaluación sumativa de competencias adquiridas.</td>
+                </tr>
+                <tr>
+                    <td>45</td>
+                    <td>Cierre del Curso</td>
+                    <td>Entrega de calificaciones finales y reflexión sobre la utilidad de la estadística.</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div style="page-break-inside: avoid;">
+            <h3>Criterios de Evaluación Sugeridos [cite: 183]</h3>
+            <ul>
+                <li><strong>Portafolio de Evidencias (Problemarios/Talleres):</strong> 40%</li>
+                <li><strong>Exámenes Parciales:</strong> 30%</li>
+                <li><strong>Proyecto Integrador / Aplicación:</strong> 20%</li>
+                <li><strong>Participación y Actitudes (Competencias Genéricas):</strong> 10%</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="print-footer">
+        &copy; JMGV-PTEL-2025. todos los derechos reservados
+    </div>
+
+</body>
+</html>

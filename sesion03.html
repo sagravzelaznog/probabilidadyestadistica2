@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sesión 3: Diferencia y Complemento - JMGV</title>
+    
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --primary: #8e44ad; /* Morado para creatividad y sabiduría */
+            --secondary: #2c3e50; /* Azul oscuro formal */
+            --accent: #f39c12; /* Naranja para resaltar */
+            --bg-light: #f4f6f7;
+            --text: #2c3e50;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            margin: 0;
+            background-color: #e0e0e0;
+            padding-bottom: 60px; /* Espacio para footer */
+        }
+
+        /* Hoja de papel */
+        .page {
+            max-width: 215.9mm; /* Carta */
+            margin: 20px auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+            position: relative;
+        }
+
+        /* Encabezado */
+        header {
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title h1 {
+            margin: 0;
+            color: var(--secondary);
+            font-size: 22px;
+            text-transform: uppercase;
+        }
+
+        .header-title h2 {
+            margin: 5px 0 0;
+            color: var(--primary);
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .header-meta {
+            text-align: right;
+            font-size: 11px;
+            color: #7f8c8d;
+        }
+
+        /* Tablas */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+        }
+
+        th, td {
+            border: 1px solid #bdc3c7;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--bg-light);
+            color: var(--secondary);
+            font-weight: bold;
+            width: 20%;
+        }
+
+        /* Bloques de la Secuencia */
+        .section-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 8px 15px;
+            font-weight: bold;
+            border-radius: 4px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .activity-card {
+            border-left: 4px solid var(--accent);
+            background-color: #fff;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .activity-title {
+            font-weight: bold;
+            color: var(--secondary);
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        /* Estilos Psico-Pedagógicos */
+        .pedagogy-note {
+            font-size: 0.9em;
+            color: #555;
+            background-color: #f9f9f9;
+            border: 1px dashed #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        
+        .pedagogy-note strong {
+            color: var(--primary);
+        }
+
+        /* Pie de página fijo */
+        .footer-fixed {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            text-align: center;
+            padding: 10px 0;
+            border-top: 1px solid #ccc;
+            font-size: 10px;
+            color: #7f8c8d;
+            z-index: 1000;
+        }
+
+        /* Ajustes para impresión */
+        @media print {
+            body { background: none; margin: 0; padding: 0; }
+            .page { box-shadow: none; margin: 0; width: 100%; max-width: 100%; padding: 30px; }
+            .footer-fixed { display: block; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .section-header, .activity-card { page-break-inside: avoid; }
+            @page { margin: 1.5cm; margin-bottom: 2cm; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page">
+    <header>
+        <div class="header-title">
+            <h1>Plan de Sesión 3</h1>
+            <h2>Probabilidad y Estadística II</h2>
+        </div>
+        <div class="header-meta">
+            <strong>Docente:</strong> José Manuel González Vargas<br>
+            <strong>Semestre:</strong> Sexto | <strong>Sesión:</strong> 3<br>
+            <strong>Duración:</strong> 45 Minutos
+        </div>
+    </header>
+
+    <table>
+        <tr>
+            <th>Tema</th>
+            <td>Teoría de Conjuntos (II): Diferencia y Complemento</td>
+        </tr>
+        <tr>
+            <th>Propósito</th>
+            <td>Aplicar las operaciones de Diferencia y Complemento para resolver problemas contextualizados (mercado, preferencias).</td>
+        </tr>
+        <tr>
+            <th>Aprendizaje Esperado</th>
+            <td>Distingue y calcula elementos que son exclusivos de un grupo (Diferencia) o que no pertenecen a él (Complemento).</td>
+        </tr>
+    </table>
+
+    <div class="section-header">
+        <span>I. APERTURA / CONEXIÓN PREVIA</span>
+        <small>10 Minutos</small>
+    </div>
+
+    <div class="activity-card">
+        <span class="activity-title">1. Reto Cognitivo: "Lo que NO soy"</span>
+        <p><strong>Actividad:</strong> Se presenta el conjunto Universal $$U = \{ \text{estudiantes del salón} \}$$. Se define el conjunto $$A = \{ \text{estudiantes con lentes} \}$$.</p>
+        <p>Se pregunta al grupo: <em>"Si llamo al frente al conjunto A, ¿quiénes se quedan sentados?"</em>. Esto introduce intuitivamente el concepto de <strong>Complemento</strong>.</p>
+        
+        <div class="pedagogy-note">
+            <strong>🧠 Fundamento Psicológico:</strong> El cerebro procesa mejor la negación ("NO son A") cuando se visualiza el "todo" (Universo) primero. Esto reduce la carga cognitiva abstracta.
+        </div>
+    </div>
+
+    <div class="section-header">
+        <span>II. DESARROLLO / GESTIÓN DEL CONOCIMIENTO</span>
+        <small>25 Minutos</small>
+    </div>
+
+    <div class="activity-card">
+        <span class="activity-title">2. Formalización Matemática (MathJax)</span>
+        <p>Explicación visual en pintarrón apoyada por la siguiente notación formal:</p>
+        
+        <ul>
+            <li>
+                <strong>Complemento ($$A^c$$ o $$A'$$):</strong> Elementos que están en el Universo pero NO en A.
+                $$A^c = \{ x \in U \mid x \notin A \}$$
+            </li>
+            <li>
+                <strong>Diferencia ($$A - B$$):</strong> "Solo A". Elementos que están en A pero NO en B.
+                $$A - B = \{ x \mid x \in A \text{ y } x \notin B \}$$
+            </li>
+        </ul>
+    </div>
+
+    <div class="activity-card">
+        <span class="activity-title">3. Problema Contextualizado: "Estudio de Mercado"</span>
+        <p><strong>Planteamiento:</strong> En una encuesta a 50 personas ($$U=50$$) sobre refrescos:</p>
+        <ul>
+            <li>30 beben Cola ($$C$$)</li>
+            <li>25 beben Naranja ($$N$$)</li>
+            <li>10 beben Ambos ($$C \cap N$$)</li>
+        </ul>
+        <p><strong>Resolución Guiada:</strong> Calcular cuántos beben <em>SOLO</em> Cola ($$C - N$$) y cuántos NO beben ninguno ($$ (C \cup N)^c $$).</p>
+        
+        <p style="background:#eee; padding:10px; border-radius:4px;">
+            <strong>Cálculo de Diferencia (Solo Cola):</strong><br>
+            $$n(C - N) = n(C) - n(C \cap N) = 30 - 10 = 20$$
+        </p>
+        <p style="background:#eee; padding:10px; border-radius:4px;">
+            <strong>Cálculo del Complemento (Ninguno):</strong><br>
+            Primero la Unión: $$n(C \cup N) = 30 + 25 - 10 = 45$$<br>
+            Luego el Complemento: $$n((C \cup N)^c) = 50 - 45 = 5$$
+        </p>
+    </div>
+
+    <div class="section-header">
+        <span>III. CIERRE / EVALUACIÓN</span>
+        <small>10 Minutos</small>
+    </div>
+
+    <div class="activity-card">
+        <span class="activity-title">4. Ticket de Salida: "Preferencia Musical"</span>
+        <p>Los alumnos resuelven individualmente:</p>
+        <p><em>"Si en el grupo hay rockeros (R) y reguetoneros (G), escribe en notación de conjuntos: 'Estudiantes que les gusta el rock pero NO el reguetón'".</em></p>
+        <p><strong>Respuesta esperada:</strong> $$R - G$$ o $$R \cap G^c$$.</p>
+    </div>
+
+</div>
+
+<div class="footer-fixed">
+    &copy; JMGV-PTEL-2025. todos los derechos reservados
+</div>
+
+</body>
+</html>

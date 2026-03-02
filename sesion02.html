@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sesión 2: Teoría de Conjuntos I - JMGV</title>
+    
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        :root {
+            --header-bg: #2c3e50;
+            --header-text: #ecf0f1;
+            --primary: #2980b9; /* Azul fuerte para títulos */
+            --accent: #e74c3c;  /* Rojo suave para énfasis */
+            --highlight: #f1c40f; /* Amarillo para notas */
+            --gray: #95a5a6;
+            --light-bg: #f9f9f9;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            margin: 0;
+            background-color: #eef2f3;
+            padding-bottom: 50px;
+        }
+
+        /* Contenedor Hoja Carta */
+        .sheet {
+            max-width: 215.9mm;
+            margin: 20px auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* Encabezado */
+        header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+
+        .brand h1 {
+            margin: 0;
+            font-size: 22px;
+            color: var(--header-bg);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .brand h2 {
+            margin: 5px 0 0;
+            font-size: 14px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .meta-data {
+            text-align: right;
+            font-size: 11px;
+            color: #555;
+        }
+
+        /* Tablas */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            font-size: 12px;
+        }
+
+        th {
+            background-color: var(--header-bg);
+            color: white;
+            text-align: left;
+            width: 20%;
+        }
+
+        /* Secciones Didácticas */
+        .phase-block {
+            margin-bottom: 25px;
+            border-left: 5px solid var(--primary);
+            background-color: #fff;
+            padding: 10px 20px;
+        }
+
+        .phase-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            color: var(--header-bg);
+            margin-bottom: 10px;
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 5px;
+        }
+
+        .time-tag {
+            background: var(--primary);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+        }
+
+        .activity-item {
+            margin-bottom: 15px;
+        }
+
+        .activity-name {
+            font-weight: 700;
+            color: #2c3e50;
+            display: block;
+        }
+
+        /* Notas del experto */
+        .expert-note {
+            background-color: #fef9e7;
+            border: 1px solid #f1c40f;
+            color: #7f6000;
+            padding: 8px;
+            font-size: 11px;
+            border-radius: 4px;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .expert-note::before {
+            content: "💡 Nota Psico-Pedagógica: ";
+            font-weight: bold;
+        }
+
+        /* Visualizaciones (Diagramas CSS simples) */
+        .venn-demo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100px;
+            margin: 10px 0;
+        }
+        .circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 10px;
+            background: rgba(41, 128, 185, 0.1);
+        }
+        .venn-demo .circle:nth-child(1) { margin-right: -20px; }
+        .venn-demo .circle:nth-child(2) { margin-left: -20px; background: rgba(231, 76, 60, 0.1); border-color: var(--accent); }
+
+        /* Pie de página fijo */
+        .footer-fixed {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            text-align: center;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+            font-size: 10px;
+            color: #666;
+            display: none; /* Se oculta en pantalla normal si se desea, pero aquí lo dejamos visible para referencia */
+        }
+
+        /* MEDIA PRINT */
+        @media print {
+            body { background: none; padding: 0; }
+            .sheet { box-shadow: none; margin: 0; width: 100%; max-width: 100%; padding: 30px 40px; }
+            .footer-fixed { display: block; }
+            
+            /* Forzar fondos */
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            
+            /* Saltos de página */
+            .phase-block { page-break-inside: avoid; }
+            
+            @page {
+                margin: 1cm;
+                margin-bottom: 2cm;
+            }
+        }
+        
+        /* Mostrar footer en pantalla para simular PDF */
+        .footer-fixed { display: block; }
+    </style>
+</head>
+<body>
+
+<div class="sheet">
+    <header>
+        <div class="brand">
+            <h1>Plan de Sesión 2</h1>
+            <h2>Probabilidad y Estadística II</h2>
+        </div>
+        <div class="meta-data">
+            <strong>Docente:</strong> José Manuel González Vargas<br>
+            <strong>Semana:</strong> 1 | <strong>Sesión:</strong> 2<br>
+            <strong>Duración:</strong> 45 Minutos
+        </div>
+    </header>
+
+    <table>
+        <tr>
+            <th>Bloque I</th>
+            <td>Probabilidad [cite: 241]</td>
+            <th>Tema</th>
+            <td>Teoría de Conjuntos (I): Unión e Intersección </td>
+        </tr>
+        <tr>
+            <th>Estrategia Didáctica</th>
+            <td colspan="3">Visualización: Uso de Diagramas de Venn con situaciones reales (características de los alumnos).</td>
+        </tr>
+        <tr>
+            <th>Aprendizaje Esperado</th>
+            <td colspan="3">Identifica las operaciones básicas de conjuntos (Unión e Intersección) y las representa gráficamente para organizar datos.</td>
+        </tr>
+    </table>
+
+    <div class="phase-block">
+        <div class="phase-title">
+            <span>I. APERTURA / CONEXIÓN</span>
+            <span class="time-tag">10 Min</span>
+        </div>
+        
+        <div class="activity-item">
+            <span class="activity-name">1. Reactivación y "Grouping" en vivo</span>
+            <p><strong>Actividad:</strong> El docente pide a los alumnos que se pongan de pie si cumplen ciertas características (ej. "Tienen reloj", "Usan lentes"). Se identifican visualmente los grupos.</p>
+            <p><strong>Pregunta detonadora:</strong> <em>"¿Hay alguien que cumpla AMBAS condiciones? ¿Dónde debería pararse esa persona?"</em></p>
+            <div class="expert-note">
+                El movimiento físico ayuda a la kinestesia y despierta la atención. Representar los conjuntos con sus propios cuerpos hace el concepto "Intersección" evidente e intuitivo.
+            </div>
+        </div>
+    </div>
+
+    <div class="phase-block">
+        <div class="phase-title">
+            <span>II. DESARROLLO / GESTIÓN DEL CONOCIMIENTO</span>
+            <span class="time-tag">25 Min</span>
+        </div>
+
+        <div class="activity-item">
+            <span class="activity-name">2. Formalización: El Lenguaje de Conjuntos </span>
+            <p>Se traslada la actividad física al pizarrón utilizando notación matemática y Diagramas de Venn.</p>
+            <ul>
+                <li><strong>Conjunto:</strong> Agrupación bien definida de objetos (Elementos). Notación: $$A, B, C...$$</li>
+                <li><strong>Unión ($$A \cup B$$):</strong> "O". Elementos que están en A, en B o en ambos. (Todo lo sombreado).</li>
+                <li><strong>Intersección ($$A \cap B$$):</strong> "Y". Elementos que están estrictamente en ambos conjuntos al mismo tiempo. (La zona central).</li>
+            </ul>
+            
+            <div class="venn-demo">
+                <div class="circle" style="background:rgba(52, 152, 219, 0.3);">A</div>
+                <div class="circle" style="background:rgba(231, 76, 60, 0.3);">B</div>
+            </div>
+            <p style="text-align: center; font-size: 10px; color: #666;">Diagrama de Venn visualizando la Intersección (zona de mezcla)</p>
+        </div>
+
+        <div class="activity-item">
+            <span class="activity-name">3. Práctica Contextualizada: "Mis Compañeros" </span>
+            <p><strong>Actividad:</strong> En equipos, realizan un censo rápido de 2 categorías en su fila (ej. "Les gusta el fútbol" vs "Les gusta bailar").</p>
+            <p>Deben dibujar el Diagrama de Venn correspondiente y sombrear la Intersección, colocando el número de alumnos en cada región.</p>
+            <div class="expert-note">
+                Al usar datos reales de sus compañeros (Andragogía), el aprendizaje se vuelve socialmente relevante y menos abstracto.
+            </div>
+        </div>
+    </div>
+
+    <div class="phase-block">
+        <div class="phase-title">
+            <span>III. CIERRE / EVALUACIÓN</span>
+            <span class="time-tag">10 Min</span>
+        </div>
+
+        <div class="activity-item">
+            <span class="activity-name">4. Evaluación Formativa (Check-list)</span>
+            <p>Resolución de un ejercicio gráfico rápido en el pintarrón donde un alumno debe sombrear la región correspondiente a $$(A \cup B)$$ y otro a $$(A \cap B)$$ bajo presión de tiempo (gamificación leve).</p>
+        </div>
+        
+        <div class="activity-item">
+            <span class="activity-name">5. Tarea Breve</span>
+            <p>Traer definida la operación de "Diferencia" y "Complemento" para la siguiente sesión.</p>
+        </div>
+    </div>
+
+</div>
+
+<div class="footer-fixed">
+    &copy; JMGV-PTEL-2025. todos los derechos reservados
+</div>
+
+</body>
+</html>

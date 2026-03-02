@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planeación Didáctica - Probabilidad y Estadística II</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --text-color: #333;
+            --border-color: #ddd;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+
+        /* Encabezado */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin: 0;
+            font-size: 24pt;
+        }
+
+        h2 {
+            color: var(--accent-color);
+            font-size: 18pt;
+            margin-top: 5px;
+        }
+
+        .meta-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            font-weight: bold;
+            background: #eef2f7;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        /* Tablas de Planeación */
+        .bloque-container {
+            background: white;
+            margin-bottom: 30px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            page-break-inside: avoid;
+        }
+
+        .bloque-title {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px;
+            margin: -20px -20px 20px -20px;
+            border-radius: 8px 8px 0 0;
+            font-size: 1.2em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            font-size: 11pt;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            color: var(--primary-color);
+            font-weight: bold;
+            width: 15%;
+        }
+
+        .semana-header {
+            background-color: var(--accent-color);
+            color: white;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        /* Pie de Página para Impresión */
+        .footer-print {
+            display: none; /* Oculto en pantalla */
+            text-align: center;
+            font-size: 10pt;
+            color: #666;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+            width: 100%;
+            position: fixed;
+            bottom: 0;
+        }
+
+        /* Estilos específicos para Impresión */
+        @media print {
+            body {
+                background-color: white;
+                font-size: 10pt; /* Reducir letra para ahorrar papel */
+            }
+
+            .bloque-container {
+                box-shadow: none;
+                border: 1px solid #ccc;
+                page-break-inside: auto;
+            }
+            
+            tr {
+                page-break-inside: avoid;
+            }
+
+            .footer-print {
+                display: block;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+            }
+
+            /* Asegura que el footer aparezca en cada página */
+            @page {
+                margin-bottom: 2cm;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Planeación Didáctica Semestral</h1>
+        <h2>Probabilidad y Estadística II</h2>
+        <div class="meta-info">
+            <span>Docente: José Manuel González Vargas</span>
+            <span>Semestre: Sexto</span>
+            <span>Total Semanas: 15</span>
+            <span>Horas Totales: 48 Hrs [cite: 12]</span>
+        </div>
+    </header>
+
+    <section class="bloque-container">
+        <div class="bloque-title">BLOQUE I: PROBABILIDAD (Semanas 1-6)</div>
+        <p><strong>Propósito:</strong> Utiliza los principios y técnicas de conteo en el análisis de datos estadísticos que fomenten la toma de decisiones consciente e informada en su vida cotidiana[cite: 121].</p>
+        
+        <table>
+            <tr class="semana-header"><td colspan="4">Semana 1: Fundamentos y Conjuntos</td></tr>
+            <tr>
+                <th>Sesión</th>
+                <th>Tema / Contenido [cite: 125]</th>
+                <th>Estrategia de Enseñanza-Aprendizaje</th>
+                <th>Evaluación</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Encuadre del curso y Conceptos básicos (Experimento, espacio muestral, evento).</td>
+                <td>Exposición interactiva y lluvia de ideas sobre "azar" en la vida diaria.</td>
+                <td>Diagnóstica[cite: 169].</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Conjuntos: Operaciones básicas (Unión e Intersección).</td>
+                <td>Resolución guiada de ejercicios visuales. Uso de diagramas en pizarra.</td>
+                <td>Ejercicios en cuaderno.</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Conjuntos: Diferencia y Complemento.</td>
+                <td>Aprendizaje basado en problemas: Clasificación de datos del grupo.</td>
+                <td>Participación activa.</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Diagramas de Venn.</td>
+                <td>Taller práctico: Construcción de diagramas con datos reales.</td>
+                <td>Rúbrica de diagrama[cite: 183].</td>
+            </tr>
+        </table>
+
+        <table>
+            <tr class="semana-header"><td colspan="4">Semana 2: Técnicas de Conteo I</td></tr>
+            <tr>
+                <th>Sesión</th>
+                <th>Tema / Contenido [cite: 125]</th>
+                <th>Actividades</th>
+                <th>Evaluación</th>
+            </tr>
+            <tr>
+                <td>5-6</td>
+                <td>Diagrama de Árbol.</td>
+                <td> Elaboración de árboles de decisión para rutas o menús.</td>
+                <td>Lista de cotejo.</td>
+            </tr>
+            <tr>
+                <td>7-8</td>
+                <td>Principio Multiplicativo y Aditivo.</td>
+                <td>Gamificación: Cálculo de combinaciones de ropa o contraseñas.</td>
+                <td>Resolución de problemas.</td>
+            </tr>
+        </table>
+
+         <table>
+            <tr class="semana-header"><td colspan="4">Semana 3: Técnicas de Conteo II</td></tr>
+            <tr>
+                <th>Sesión</th>
+                <th>Tema / Contenido [cite: 125]</th>
+                <th>Actividades</th>
+                <th>Evaluación</th>
+            </tr>
+            <tr>
+                <td>9-10</td>
+                <td>Permutaciones (Importa el orden).</td>
+                <td>Análisis de casos: Carreras y puestos directivos. Uso de calculadora científica.</td>
+                <td>Ejercicios prácticos.</td>
+            </tr>
+            <tr>
+                <td>11-12</td>
+                <td>Combinaciones (No importa el orden).</td>
+                <td>Diferenciación crítica entre permutación y combinación. Formación de equipos.</td>
+                <td>Quiz rápido.</td>
+            </tr>
+        </table>
+
+        <table>
+            <tr class="semana-header"><td colspan="4">Semana 4: Tipos de Eventos</td></tr>
+            <tr>
+                <th>Sesión</th>
+                <th>Tema / Contenido [cite: 125]</th>
+                <th>Actividades</th>
+                <th>Evaluación</th>
+            </tr>
+            <tr>
+                <td>13-14</td>
+                <td>Eventos Mutuamente Excluyentes e Incompatibles.</td>
+                <td>Uso de baraja española/inglesa para ejemplificar exclusión.</td>
+                <td>Observación directa.</td>
+            </tr>
+            <tr>
+                <td>15-16</td>
+                <td>Eventos Independientes y Dependientes.</td>
+                <td>Simulación con urnas y bolas (con y sin reemplazo).</td>
+                <td>Taller de problemas.</td>
+            </tr>
+        </table>
+
+        <table>
+            <tr class="semana-header"><td colspan="4">Semana 5: Cálculo de Probabilidades</td></tr>
+            <tr>
+                <th>Sesión</th>
+                <th>Tema / Contenido</th>
+                <th>Actividades</th>
+                <th>Evaluación</th>
+            </tr>
+            <tr>
+                <td>17-18</td>
+                <td>Enfoque Clásico y Frecuencial de la Probabilidad.</td>
+                <td>Ley de los Grandes Números con simuladores web o dados físicos.</td>
+                <td>Reporte de simulación.</td>
+            </tr>
+            <tr>
+                <td>19-20</td>
+                <td>Probabilidad Axiomática.</td>
+                <td>Resolución de problemas complejos integrando técnicas de conteo.</td>
+                <td>Problemario (Avance Portafolio [cite: 184]).</td>
+            </tr>
+        </table>
+
+        <table>
+           <tr class="semana-header"><td colspan="4">Semana 6: Cierre Bloque I</td></tr>
+           <tr>
+               <th>Sesión</th>
+               <th>Tema / Contenido</th>
+               <th>Actividades</th>
+               <th>Evaluación</th>
+           </tr>
+           <tr>
+               <td>21-22</td>
+               <td>Repaso General y Aplicación Contextual.</td>
+               <td>Retroalimentación y resolución de dudas.</td>
+               <td>Coevaluación[cite: 166].</td>
+           </tr>
+           <tr>
+               <td>23-24</td>
+               <td>Evaluación del Bloque I.</td>
+               <td>Examen escrito y entrega de Portafolio de Evidencias.</td>
+               <td>Sumativa[cite: 177].</td>
+           </tr>
+       </table>
+    </section>
+
+    <section class="bloque-container">
+        <div class="bloque-title">BLOQUE II: DISTRIBUCIONES DE PROBABILIDAD (Semanas 7-11)</div>
+        <p><strong>Propósito:</strong> Aplica de manera crítica las distribuciones de probabilidad para hacer inferencias y toma de decisiones[cite: 136].</p>
+        
+        <table>
+            <tr class="semana-header"><td colspan="4">Semana 7: Variables Aleatorias</td></tr>
+            <tr>
+                <th>Sesión</th>
+                <th>Tema / Contenido</th>
+                <th>Actividades</th>
+                <th>Evaluación</th>
+            </tr>
+            <tr>
+                <td>25-28</td>
+                <td>Variables Aleatorias Discretas vs Continuas. Introducción a Distribuciones.</td>
+                <td>Clasificación de variables del entorno (estatura vs número de hermanos). Gráficas de distribución.</td>
+                <td>Mapa conceptual.</td>
+            </tr>
+        </table>
+
+        <table>
+            <tr class="semana-header"><td colspan="4">Semana 8: Distribución de Bernoulli</td></tr>
+            <tr>
+                <th>Sesión</th>
+                <th>Tema / Contenido [cite: 141]</th>
+                <th>Actividades</th>
+                <th>Evaluación</th>
+            </tr>
+            <tr>
+                <td>29-32</td>
+                <td>Distribución de Bernoulli (Éxito/Fracaso).</td>
+                <td>Análisis de experimentos binarios simples. Definición de parámetros p y q.</td>
+                <td>Ejercicios en clase.</td>
+            </tr>
+        </table>
+
+        <table>
+            <tr class="semana-header"><td colspan="4">Semana 9: Distribución Binomial</td></tr>
+            <tr>
+                <th>Sesión</th>
+                <th>Tema / Contenido [cite: 141]</th>
+                <th>Actividades</th>
+                <th>Evaluación</th>
+            </tr>
+            <tr>
+                <td>33-36</td>
+                <td>Distribución Binomial: Fórmula y Tablas.</td>
+                <td>Cálculo de probabilidad de "x" éxitos en "n" ensayos. Uso de Excel o Geogebra para visualizar la función de masa.</td>
+                <td>Taller práctico en laboratorio o móvil.</td>
+            </tr>
+        </table>
+
+        <table>
+            <tr class="semana-header"><td colspan="4">Semana 10: Distribución Normal I</td></tr>
+            <tr>
+                <th>Sesión</th>
+                <th>Tema / Contenido [cite: 141]</th>
+                <th>Actividades</th>
+                <th>Evaluación</th>
+            </tr>
+            <tr>
+                <td>37-40</td>
+                <td>Distribución Normal: Características y Campana de Gauss. </td>
+                <td>Análisis de fenómenos naturales (peso, altura). Estandarización (Valor Z).</td>
+                <td>Análisis de gráficas.</td>
+            </tr>
+        </table>
+
+        <table>
+            <tr class="semana-header"><td colspan="4">Semana 11: Distribución Normal II y Cierre Bloque II</td></tr>
+            <tr>
+                <th>Sesión</th>
+                <th>Tema / Contenido [cite: 141]</th>
+                <th>Actividades</th>
+                <th>Evaluación</th>
+            </tr>
+            <tr>
+                <td>41-42</td>
+                <td>Uso de Tablas Z y resolución de problemas de área bajo la curva.</td>
+                <td>Resolución de problemas de contexto social y salud[cite: 48].</td>
+                <td>Lista de cotejo.</td>
+            </tr>
+            <tr>
+                <td>43-44</td>
+                <td>Evaluación Bloque II.</td>
+                <td>Presentación de proyecto o examen.</td>
+                <td>Sumativa.</td>
+            </tr>
+        </table>
+    </section>
+
+    <section class="bloque-container">
+        <div class="bloque-title">BLOQUE III: MODELOS PROBABILÍSTICOS (Semanas 12-15)</div>
+        <p><strong>Propósito:</strong> Relaciona de manera reflexiva el uso de distintos métodos probabilísticos para describir comportamientos[cite: 151].</p>
+        
+        <table>
+            <tr class="semana-header"><td colspan="4">Semana 12: Probabilidad Condicional</td></tr>
+            <tr>
+                <th>Sesión</th>
+                <th>Tema / Contenido [cite: 156]</th>
+                <th>Actividades</th>
+                <th>Evaluación</th>
+            </tr>
+            <tr>
+                <td>45-48</td>
+                <td>Probabilidad Condicional.</td>
+                <td>Análisis de situaciones donde un evento previo afecta al siguiente. Tablas de contingencia.</td>
+                <td>Ejercicios situacionales.</td>
+            </tr>
+        </table>
+
+        <table>
+            <tr class="semana-header"><td colspan="4">Semana 13: Teorema de Bayes</td></tr>
+            <tr>
+                <th>Sesión</th>
+                <th>Tema / Contenido [cite: 156]</th>
+                <th>Actividades</th>
+                <th>Evaluación</th>
+            </tr>
+            <tr>
+                <td>49-52</td>
+                <td>Teorema de Bayes.</td>
+                <td>Aplicaciones en medicina (falsos positivos) y tecnología. Diagramas de árbol invertidos.</td>
+                <td>Estudio de casos.</td>
+            </tr>
+        </table>
+
+        <table>
+            <tr class="semana-header"><td colspan="4">Semana 14: Distribución de Poisson</td></tr>
+            <tr>
+                <th>Sesión</th>
+                <th>Tema / Contenido [cite: 156]</th>
+                <th>Actividades</th>
+                <th>Evaluación</th>
+            </tr>
+            <tr>
+                <td>53-56</td>
+                <td>Distribución de Poisson (Eventos raros en tiempo/espacio).</td>
+                <td>Cálculo de llegadas de clientes, defectos en producción. Comparación con Binomial.</td>
+                <td>Problemario final.</td>
+            </tr>
+        </table>
+
+        <table>
+            <tr class="semana-header"><td colspan="4">Semana 15: Cierre del Semestre</td></tr>
+            <tr>
+                <th>Sesión</th>
+                <th>Tema / Contenido</th>
+                <th>Actividades</th>
+                <th>Evaluación</th>
+            </tr>
+            <tr>
+                <td>57-58</td>
+                <td>Integración de conocimientos.</td>
+                <td>Feria de probabilidad o exposición de proyectos transversales[cite: 50].</td>
+                <td>Heteroevaluación[cite: 167].</td>
+            </tr>
+            <tr>
+                <td>59-60</td>
+                <td>Evaluación Final y Retroalimentación.</td>
+                <td>Entrega final de calificaciones y cierre del curso.</td>
+                <td>Final.</td>
+            </tr>
+        </table>
+    </section>
+
+    <div class="footer-print">
+        &copy; JMGV-PTEL-2025. todos los derechos reservados
+    </div>
+
+</body>
+</html>

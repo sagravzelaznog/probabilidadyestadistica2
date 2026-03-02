@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Maestra: Probabilidad y Estadística</title>
+    <style>
+        /* =========================================================
+           VARIABLES DE GAMIFICACIÓN Y ESTILOS WEB (ESTILO KAHOOT)
+           ========================================================= */
+        :root {
+            --bg-main: #f0f4f8;
+            --header-bg: #46178f; /* Morado Kahoot */
+            --text-dark: #333333;
+            --text-light: #ffffff;
+            --card-bg: #ffffff;
+            --opt-a: #e21b3c; /* Rojo */
+            --opt-b: #1368ce; /* Azul */
+            --opt-c: #d89e00; /* Amarillo */
+            --opt-d: #26890c; /* Verde */
+            --locked-bg: #e5e7eb;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+
+        body { background-color: var(--bg-main); color: var(--text-dark); line-height: 1.5; }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+
+        /* --- ENCABEZADO --- */
+        header {
+            background-color: var(--header-bg); color: var(--text-light);
+            padding: 25px 20px; border-radius: 12px; margin-bottom: 25px;
+            text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 { font-size: 2rem; margin-bottom: 15px; font-weight: 800; }
+
+        .student-info {
+            display: flex; flex-wrap: wrap; gap: 15px; justify-content: space-between;
+            background: rgba(255, 255, 255, 0.15); padding: 15px; border-radius: 8px;
+        }
+
+        .info-group { flex: 1; min-width: 150px; display: flex; align-items: center; gap: 8px; }
+        .info-group label { font-weight: 700; font-size: 1rem; white-space: nowrap; }
+        .info-group input {
+            flex: 1; background: transparent; border: none; border-bottom: 2px solid var(--text-light);
+            color: var(--text-light); font-size: 1rem; padding: 4px; outline: none; transition: border-color 0.3s;
+        }
+        .info-group input:focus { border-bottom-color: #ffd54f; }
+        .info-group input::placeholder { color: rgba(255,255,255,0.6); font-size: 0.9rem; }
+
+        /* --- TARJETAS DE PREGUNTAS --- */
+        .question-card {
+            background-color: var(--card-bg); padding: 20px; border-radius: 10px;
+            margin-bottom: 20px; box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+            border-left: 6px solid var(--header-bg); transition: all 0.3s ease;
+        }
+
+        .question-card.locked { opacity: 0.7; border-left-color: #9ca3af; filter: grayscale(10%); }
+
+        .question-text { font-size: 1.15rem; font-weight: 700; margin-bottom: 15px; }
+
+        /* --- OPCIONES (BOTONES KAHOOT) --- */
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        .option-label {
+            display: flex; align-items: center; padding: 12px; border-radius: 8px;
+            color: white; font-weight: 700; font-size: 1rem; cursor: pointer;
+            box-shadow: 0 3px 0 rgba(0,0,0,0.2); transition: transform 0.1s, filter 0.2s;
+        }
+
+        .option-label:hover:not(.disabled) { filter: brightness(1.1); transform: translateY(-2px); }
+        .option-label:active:not(.disabled) { transform: translateY(2px); box-shadow: none; }
+        
+        .option-label.disabled { cursor: not-allowed; box-shadow: none; transform: none; opacity: 0.8; }
+        .option-label input[type="radio"] { margin-right: 12px; transform: scale(1.3); cursor: inherit; }
+
+        .opt-0 { background-color: var(--opt-a); }
+        .opt-1 { background-color: var(--opt-b); }
+        .opt-2 { background-color: var(--opt-c); }
+        .opt-3 { background-color: var(--opt-d); }
+
+        /* --- BOTÓN FINAL --- */
+        .submit-btn {
+            display: block; width: 100%; padding: 15px; font-size: 1.3rem; font-weight: 800;
+            background-color: var(--header-bg); color: white; border: none; border-radius: 8px;
+            cursor: pointer; margin-top: 30px; box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+        }
+        .submit-btn:hover { background-color: #311069; }
+
+        #result-container {
+            margin-top: 20px; padding: 20px; background-color: #d1fae5; color: #065f46;
+            border-radius: 8px; font-size: 1.4rem; text-align: center; font-weight: 800; display: none;
+        }
+
+        .footer-text { text-align: center; margin-top: 30px; color: #6b7280; font-size: 0.85rem; font-weight: bold; }
+
+        /* =========================================================
+           SÚPER COMPRESIÓN PARA PDF (50 PREGUNTAS EN 2 HOJAS MÁXIMO)
+           ========================================================= */
+        @media print {
+            @page { size: letter; margin: 0.6cm; } /* Margen mínimo */
+            
+            body { background-color: white; color: black; font-size: 7.5pt; line-height: 1; }
+            .container { width: 100%; max-width: none; padding: 0; }
+            
+            /* Encabezado compacto */
+            header { 
+                background: white !important; color: black !important; box-shadow: none; 
+                border-radius: 0; padding: 0; margin-bottom: 5px; text-align: left;
+            }
+            h1 { font-size: 11pt; margin-bottom: 4px; border-bottom: 1px solid black; padding-bottom: 2px; }
+            
+            /* Identificación en una sola línea */
+            .student-info { background: none; padding: 0; gap: 5px; margin-bottom: 5px; flex-wrap: nowrap;}
+            .info-group label { color: black; font-size: 7.5pt; font-weight: bold;}
+            .info-group input { border: none; border-bottom: 1px solid black; color: black; font-size: 7.5pt; padding: 0; height: 12px; }
+            .info-group input::placeholder { color: transparent; }
+            
+            /* ESTRATEGIA CLAVE: Dividir las preguntas en 2 columnas */
+            #questions-container {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                column-gap: 10px;
+                row-gap: 2px;
+            }
+
+            /* Preguntas hiper-comprimidas, sin bordes decorativos */
+            .question-card { 
+                box-shadow: none; border: none; border-bottom: 0.5px solid #ccc; 
+                border-left: none; padding: 2px 0; margin-bottom: 0; 
+                page-break-inside: avoid; break-inside: avoid; 
+                opacity: 1 !important; filter: none !important;
+            }
+            .question-text { font-size: 7.5pt; margin-bottom: 2px; font-weight: bold; }
+            
+            /* Opciones comprimidas en texto seguido o cuadrícula muy pequeña */
+            .options-grid { 
+                display: flex; flex-wrap: wrap; gap: 2px; 
+            }
+            .option-label { 
+                background: transparent !important; color: black !important; 
+                border: none; box-shadow: none; padding: 0; width: 48%; /* 2x2 diminuto */
+                font-size: 7pt; font-weight: normal; opacity: 1 !important;
+            }
+            .option-label input[type="radio"] { transform: scale(0.7); margin-right: 2px; }
+
+            .submit-btn, #result-container { display: none !important; }
+            .footer-text { display: none; } /* Ocultar footer para ganar espacio */
+        }
+
+        @media (max-width: 600px) {
+            .options-grid { grid-template-columns: 1fr; }
+            .student-info { flex-direction: column; }
+            .info-group { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Guía de Probabilidad y Estadística</h1>
+        <div class="student-info">
+            <div class="info-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" placeholder="Requerido" autocomplete="off">
+            </div>
+            <div class="info-group">
+                <label for="apellido">Apellido:</label>
+                <input type="text" id="apellido" name="apellido" placeholder="Requerido" autocomplete="off">
+            </div>
+            <div class="info-group">
+                <label for="semestre">Semestre:</label>
+                <input type="text" id="semestre" name="semestre" autocomplete="off">
+            </div>
+            <div class="info-group">
+                <label for="fecha">Fecha:</label>
+                <input type="text" id="fecha" name="fecha" autocomplete="off">
+            </div>
+        </div>
+    </header>
+
+    <form id="quiz-form">
+        <div id="questions-container"></div>
+        <button type="button" class="submit-btn" onclick="calificarExamen()">Calificar Guía</button>
+        <div id="result-container"></div>
+    </form>
+    
+    <div class="footer-text">
+        &copy; 2026 JMGV-PTEL Programa de PENSAMIENTO MATEMÁTICO. Todos los derechos reservados.
+    </div>
+</div>
+
+<script>
+    // =========================================================================
+    // BANCO DE 50 PREGUNTAS (Técnicas de Conteo, Factoriales, Probabilidad, etc.)
+    // =========================================================================
+    const quizData = [
+        // ÁRBOL DE PROBABILIDAD (1-8)
+        { q: "1. ¿Qué es un diagrama de árbol en probabilidad?", a: ["Una gráfica de barras horizontales", "Una representación gráfica de todos los resultados posibles de un experimento", "Un método para calcular solo permutaciones", "Una fórmula para integrar funciones"], c: 1 },
+        { q: "2. En un diagrama de árbol para lanzar una moneda 3 veces, ¿cuántas ramas finales (resultados posibles) hay?", a: ["3", "6", "8", "9"], c: 2 },
+        { q: "3. Si la probabilidad de lluvia es 0.3 y de no lluvia es 0.7, ¿cuánto suman las probabilidades de las ramas que parten de ese mismo nodo?", a: ["0.3", "0.7", "1.0", "100"], c: 2 },
+        { q: "4. Al recorrer un camino a lo largo de las ramas de un diagrama de árbol, las probabilidades sucesivas se:", a: ["Suman", "Restan", "Multiplican", "Dividen"], c: 2 },
+        { q: "5. Si se lanza un dado de 6 caras y luego una moneda, ¿cuántos resultados posibles muestra el diagrama de árbol?", a: ["8", "12", "36", "2"], c: 1 },
+        { q: "6. En un diagrama de árbol, dos eventos son independientes si:", a: ["La probabilidad del segundo no cambia por el resultado del primero", "No se pueden dibujar en el mismo árbol", "Sus ramas nunca se tocan", "Suman cero"], c: 0 },
+        { q: "7. Un restaurante ofrece 3 entradas, 4 platos fuertes y 2 postres. ¿Cuántos menús diferentes se pueden formar usando un diagrama de árbol?", a: ["9", "12", "24", "48"], c: 2 },
+        { q: "8. ¿Para qué experimentos es poco práctico usar un diagrama de árbol?", a: ["Lanzar 2 monedas", "Sacar 1 carta de una baraja", "Lanzar 10 dados simultáneamente", "Elegir entre 3 colores"], c: 2 },
+        
+        // TÉCNICAS DE CONTEO Y PRINCIPIO FUNDAMENTAL (9-16)
+        { q: "9. ¿Qué establece el Principio Fundamental del Conteo (Regla de la Multiplicación)?", a: ["Si un evento ocurre de 'm' formas y otro de 'n' formas, juntos ocurren de m+n formas", "Si un evento ocurre de 'm' formas y otro de 'n' formas, juntos ocurren de m*n formas", "Solo se aplica a factoriales pares", "Determina el espacio muestral dividiendo eventos"], c: 1 },
+        { q: "10. ¿De cuántas formas te puedes vestir si tienes 5 camisas, 3 pantalones y 2 pares de zapatos?", a: ["10", "15", "25", "30"], c: 3 },
+        { q: "11. ¿Cuántas contraseñas de 3 letras (usando 26 letras sin repetición) se pueden crear?", a: ["26*26*26", "26*25*24", "26+25+24", "3*26"], c: 1 },
+        { q: "12. Si puedes viajar de A a B por 3 rutas, y de B a C por 4 rutas, ¿cuántas rutas hay de A a C pasando por B?", a: ["7", "12", "81", "1"], c: 1 },
+        { q: "13. ¿En qué caso se utiliza el Principio de la Suma en técnicas de conteo?", a: ["Cuando los eventos ocurren simultáneamente", "Cuando los eventos son mutuamente excluyentes (no pueden ocurrir a la vez)", "Al calcular factoriales", "Al hacer combinaciones con repetición"], c: 1 },
+        { q: "14. Tienes que elegir leer 1 libro de ficción (hay 5 opciones) O 1 libro de ciencia (hay 4 opciones). ¿Cuántas opciones tienes?", a: ["9", "20", "1", "54"], c: 0 },
+        { q: "15. ¿Cuántos números de 2 cifras diferentes se pueden formar con los dígitos 1, 2, 3, 4?", a: ["16", "12", "8", "24"], c: 1 },
+        { q: "16. Para un examen de falso/verdadero de 5 preguntas, ¿cuántas formas diferentes hay de responder el examen completo?", a: ["10", "25", "32", "64"], c: 2 },
+
+        // NOTACIÓN FACTORIAL (17-24)
+        { q: "17. ¿Qué representa la notación factorial 'n!'?", a: ["La suma de todos los números hasta n", "El producto de todos los números enteros positivos desde 1 hasta n", "El número n elevado al cuadrado", "Un número imaginario"], c: 1 },
+        { q: "18. ¿A cuánto equivale 0! (cero factorial)?", a: ["0", "1", "-1", "Infinito"], c: 1 },
+        { q: "19. ¿Cuál es el valor de 4!?", a: ["16", "12", "24", "48"], c: 2 },
+        { q: "20. Simplifica la expresión 6! / 4!:", a: ["2!", "1.5", "30", "12"], c: 2 },
+        { q: "21. ¿Qué expresión es matemáticamente equivalente a n!?", a: ["n * (n-1)!", "(n-1)! / n", "n + (n-1)!", "n^2"], c: 0 },
+        { q: "22. Calcula el valor de 5! + 3!:", a: ["8!", "126", "123", "18"], c: 1 },
+        { q: "23. Si n! = 120, ¿cuál es el valor de n?", a: ["4", "5", "6", "10"], c: 1 },
+        { q: "24. En técnicas de conteo, ¿para qué se usa directamente n!?", a: ["Para hallar combinaciones sin importar el orden", "Para calcular las maneras de ordenar 'n' objetos distintos en 'n' lugares", "Para calcular probabilidades excluyentes", "Para diagramas de árbol infinitos"], c: 1 },
+
+        // PERMUTACIONES (25-33)
+        { q: "25. ¿Qué es una permutación?", a: ["Un arreglo donde el orden NO importa", "Un arreglo donde el orden SÍ importa", "Una suma de probabilidades", "Un evento mutuamente excluyente"], c: 1 },
+        { q: "26. La fórmula de permutaciones de 'n' elementos tomados de 'r' en 'r' (nPr) es:", a: ["n! / (n-r)!", "n! / [r!(n-r)!]", "n^r", "n! * r!"], c: 0 },
+        { q: "27. ¿De cuántas formas pueden sentarse 3 personas en 3 sillas?", a: ["3", "6", "9", "27"], c: 1 },
+        { q: "28. De un grupo de 10 personas, se elegirá a un Presidente, un Secretario y un Tesorero. Se debe usar:", a: ["Combinaciones", "Permutaciones", "Factorial simple", "Principio de la suma"], c: 1 },
+        { q: "29. Calcula 5P2 (permutaciones de 5 elementos en grupos de 2):", a: ["10", "20", "60", "120"], c: 1 },
+        { q: "30. ¿Cuántas palabras diferentes (con o sin sentido) se pueden formar ordenando las letras de la palabra 'SOL'?", a: ["3", "6", "9", "1"], c: 1 },
+        { q: "31. ¿Cuál es la diferencia clave entre una permutación y una combinación?", a: ["La permutación divide, la combinación multiplica", "En la permutación el orden de los elementos cambia el resultado", "La combinación solo se usa para letras", "No hay diferencia, son lo mismo"], c: 1 },
+        { q: "32. ¿Cómo se calculan las permutaciones con elementos repetidos (ej. palabra 'OSO')?", a: ["n! / (n1! * n2!...)", "n! * r!", "n^r", "(n-1)!"], c: 0 },
+        { q: "33. ¿De cuántas formas se pueden acomodar 4 personas en una mesa redonda (Permutación circular)?", a: ["24", "16", "6", "4"], c: 2 },
+
+        // COMBINACIONES Y COEFICIENTES BINOMIALES (34-43)
+        { q: "34. ¿Qué es una combinación?", a: ["Un arreglo donde el orden SÍ importa", "Un arreglo donde el orden NO importa", "Un diagrama de árbol cerrado", "La probabilidad de dos eventos dependientes"], c: 1 },
+        { q: "35. La fórmula para combinaciones de 'n' elementos tomados de 'r' en 'r' (nCr) es:", a: ["n! / (n-r)!", "n! / [r!(n-r)!]", "r! / n!", "n * r"], c: 1 },
+        { q: "36. De 5 estudiantes, se debe elegir a 2 para borrar el pizarrón. ¿Es permutación o combinación?", a: ["Permutación", "Combinación", "Ambas", "Ninguna"], c: 1 },
+        { q: "37. Calcula 4C2 (combinaciones de 4 elementos en grupos de 2):", a: ["6", "12", "4", "2"], c: 0 },
+        { q: "38. ¿Qué es un coeficiente binomial?", a: ["El resultado de dividir dos factoriales", "El número que indica de cuántas formas se pueden elegir 'k' elementos de un conjunto de 'n' (es igual a nCk)", "Una raíz cuadrada estadística", "La probabilidad de un evento imposible"], c: 1 },
+        { q: "39. En el Teorema del Binomio para desarrollar (a+b)^n, los coeficientes corresponden a:", a: ["El Triángulo de Pascal", "El Principio Multiplicativo", "La Campana de Gauss", "El Teorema de Pitágoras"], c: 0 },
+        { q: "40. Si calculas 5C5, el resultado siempre será:", a: ["5", "0", "1", "120"], c: 2 },
+        { q: "41. ¿Cuál de estas igualdades de propiedades binomiales es correcta?", a: ["nCr = nP(n-r)", "nCr = nC(n-r)", "nCr = rCn", "nPr = nCr"], c: 1 },
+        { q: "42. En una heladería hay 6 sabores. Si pides un cono de 3 bolas (diferentes sabores), ¿cuántas opciones tienes?", a: ["18", "120", "20", "6"], c: 2 },
+        { q: "43. ¿Para qué se utiliza nCr en probabilidad?", a: ["Para contar resultados favorables cuando el orden de extracción no importa", "Para medir la desviación estándar", "Para graficar un histograma", "Para eventos excluyentes en árboles"], c: 0 },
+
+        // EJERCICIOS APLICADOS (44-50)
+        { q: "44. Un candado de bicicleta tiene 3 anillos, cada uno con números del 0 al 9. ¿Cuántas combinaciones (técnicamente arreglos) existen?", a: ["30", "100", "1000", "729"], c: 2 },
+        { q: "45. En una carrera de 8 caballos, ¿de cuántas formas se pueden otorgar los premios de primero, segundo y tercer lugar?", a: ["336", "56", "24", "512"], c: 0 },
+        { q: "46. En un torneo de ajedrez hay 10 jugadores. Si cada jugador debe jugar contra todos los demás exactamente una vez, ¿cuántas partidas habrá? (10C2)", a: ["90", "45", "100", "20"], c: 1 },
+        { q: "47. Se lanzan 2 dados. ¿Cuántos resultados posibles componen el espacio muestral total?", a: ["12", "24", "36", "6"], c: 2 },
+        { q: "48. Tienes 4 banderas de diferentes colores. ¿Cuántas señales diferentes de 2 banderas (una arriba y otra abajo) puedes hacer?", a: ["6", "8", "12", "16"], c: 2 },
+        { q: "49. ¿De cuántas formas se pueden ordenar las letras de la palabra 'MAMA'?", a: ["24", "12", "6", "4"], c: 2 },
+        { q: "50. Al lanzar una moneda 4 veces, ¿cuál es el número total de ramas finales en su diagrama de árbol?", a: ["8", "16", "4", "32"], c: 1 }
+    ];
+
+    // Función para mezclar opciones sin perder el índice correcto
+    quizData.forEach((q) => {
+        let optionsWithIndex = q.a.map((opt, index) => {
+            return { text: opt, isCorrect: (index === q.c) };
+        });
+
+        // Fisher-Yates para barajar
+        for (let i = optionsWithIndex.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [optionsWithIndex[i], optionsWithIndex[j]] = [optionsWithIndex[j], optionsWithIndex[i]];
+        }
+
+        q.a = optionsWithIndex.map(opt => opt.text);
+        q.c = optionsWithIndex.findIndex(opt => opt.isCorrect);
+    });
+
+    const container = document.getElementById('questions-container');
+
+    // Renderizar las 50 preguntas
+    quizData.forEach((q, index) => {
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        card.id = `card-${index}`;
+        
+        let optionsHTML = '';
+        q.a.forEach((opt, i) => {
+            optionsHTML += `
+                <label class="option-label opt-${i}">
+                    <input type="radio" name="q${index}" value="${i}" onclick="validarYBloquear(event, ${index})">
+                    <span>${opt}</span>
+                </label>
+            `;
+        });
+
+        card.innerHTML = `
+            <div class="question-text">${q.q}</div>
+            <div class="options-grid">
+                ${optionsHTML}
+            </div>
+        `;
+        container.appendChild(card);
+    });
+
+    // LÓGICA: Validación de Identidad y Bloqueo de Pregunta
+    function validarYBloquear(event, questionIndex) {
+        const nombre = document.getElementById('nombre').value.trim();
+        const apellido = document.getElementById('apellido').value.trim();
+
+        // 1. Exigir Nombre y Apellido
+        if (nombre === "" || apellido === "") {
+            event.preventDefault(); // Impide seleccionar la opción
+            alert("⚠️ ALTO: Para poder contestar la guía, es obligatorio ingresar tu Nombre y Apellido en la parte superior.");
+            
+            if (nombre === "") document.getElementById('nombre').focus();
+            else document.getElementById('apellido').focus();
+            return;
+        }
+
+        // 2. Bloquear opciones una vez seleccionada la respuesta
+        const radioSeleccionado = event.target;
+        const nombreGrupo = radioSeleccionado.name;
+        const todosLosRadios = document.querySelectorAll(`input[name="${nombreGrupo}"]`);
+        
+        todosLosRadios.forEach(radio => {
+            if (radio !== radioSeleccionado) {
+                radio.disabled = true; // Deshabilita los demás radio buttons
+                radio.closest('.option-label').classList.add('disabled');
+            }
+        });
+
+        // Efecto visual de pregunta bloqueada
+        document.getElementById(`card-${questionIndex}`).classList.add('locked');
+    }
+
+    // Lógica de calificación
+    function calificarExamen() {
+        const nombre = document.getElementById('nombre').value.trim();
+        const apellido = document.getElementById('apellido').value.trim();
+        
+        if (nombre === "" || apellido === "") {
+            alert("Asegúrate de ingresar tus datos personales antes de calificar.");
+            return;
+        }
+
+        let score = 0;
+        let answeredCount = 0;
+
+        quizData.forEach((q, index) => {
+            const selected = document.querySelector(`input[name="q${index}"]:checked`);
+            if (selected) {
+                answeredCount++;
+                if (parseInt(selected.value) === q.c) {
+                    score++;
+                }
+            }
+        });
+
+        const resultDiv = document.getElementById('result-container');
+        resultDiv.style.display = 'block';
+
+        if (answeredCount < quizData.length) {
+            resultDiv.style.backgroundColor = '#fef3c7';
+            resultDiv.style.color = '#92400e';
+            resultDiv.innerHTML = `Atención: Solo has respondido ${answeredCount} de 50 preguntas. Completa la guía.`;
+            return;
+        }
+
+        const percentage = Math.round((score / quizData.length) * 100);
+        resultDiv.style.backgroundColor = score >= 30 ? '#d1fae5' : '#fee2e2';
+        resultDiv.style.color = score >= 30 ? '#065f46' : '#991b1b';
+        resultDiv.innerHTML = `Guía concluida por: ${nombre} ${apellido}<br>Tu puntuación es: ${score} de 50 (${percentage}%)`;
+        
+        document.querySelector('.submit-btn').disabled = true;
+    }
+</script>
+
+</body>
+</html>

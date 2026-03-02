@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sesión 1: Encuadre y Conceptos Básicos - JMGV</title>
+				<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+   	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --primary: #2c3e50; /* Azul oscuro corporativo */
+            --accent: #e67e22;  /* Naranja para resaltar puntos clave */
+            --light: #ecf0f1;   /* Gris muy claro para fondos */
+            --success: #27ae60; /* Verde para objetivos logrados */
+            --text: #34495e;    /* Gris oscuro para lectura cómoda */
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', Helvetica, Arial, sans-serif;
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            background-color: #f4f4f4;
+            /* Espacio inferior para evitar que el footer fijo tape contenido en pantalla */
+            padding-bottom: 60px; 
+        }
+
+        /* Contenedor principal tipo hoja */
+        .page-container {
+            max-width: 215.9mm; /* Ancho carta */
+            margin: 20px auto;
+            background: var(--white);
+            padding: 40px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Encabezado */
+        header {
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left h1 {
+            margin: 0;
+            color: var(--primary);
+            font-size: 24px;
+            text-transform: uppercase;
+        }
+
+        .header-left h2 {
+            margin: 5px 0 0;
+            color: var(--accent);
+            font-size: 16px;
+            font-weight: normal;
+        }
+
+        .header-right {
+            text-align: right;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        /* Tablas de información */
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+        }
+
+        .info-table th, .info-table td {
+            border: 1px solid #bdc3c7;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .info-table th {
+            background-color: var(--light);
+            color: var(--primary);
+            width: 25%;
+            font-weight: 600;
+        }
+
+        /* Secciones de la secuencia */
+        .section-title {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 8px 15px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 4px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .activity-box {
+            border-left: 4px solid var(--accent);
+            padding: 10px 15px;
+            background-color: #fdfefe;
+            margin-bottom: 15px;
+        }
+
+        .activity-title {
+            font-weight: bold;
+            color: var(--primary);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .teacher-note {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            font-style: italic;
+            background-color: #f9f9f9;
+            padding: 8px;
+            border-radius: 4px;
+            margin-top: 8px;
+            border: 1px dashed #bdc3c7;
+        }
+
+        .icon-clock {
+            font-weight: normal;
+            background: rgba(255,255,255,0.2);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.9em;
+        }
+
+        /* Pie de página para impresión (Fixed) */
+        .footer-print {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: white;
+            text-align: center;
+            padding: 10px 0;
+            border-top: 1px solid #ccc;
+            font-size: 10px;
+            color: #7f8c8d;
+            /* Solo visible en impresión o simulación */
+        }
+
+        /* LISTAS */
+        ul {
+            margin: 5px 0;
+            padding-left: 20px;
+        }
+
+        /* ESTILOS DE IMPRESIÓN */
+        @media print {
+            body {
+                background: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            .page-container {
+                box-shadow: none;
+                margin: 0;
+                padding: 40px; /* Margen interno de la hoja */
+                width: 100%;
+                max-width: 100%;
+            }
+
+            /* Forzar impresión de colores de fondo (backgrounds) */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            /* Evitar cortes feos */
+            .activity-box, tr {
+                page-break-inside: avoid;
+            }
+
+            /* Configuración de márgenes de página */
+            @page {
+                margin: 1cm;
+                margin-bottom: 1.5cm; /* Espacio para el footer fijo */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-container">
+        <header>
+            <div class="header-left">
+                <h1>Plan de Sesión 1</h1>
+                <h2>Probabilidad y Estadística II</h2>
+            </div>
+            <div class="header-right">
+                <strong>Docente:</strong> José Manuel González Vargas<br>
+                <strong>Duración:</strong> 45 minutos<br>
+                <strong>Semestre:</strong> Sexto
+            </div>
+        </header>
+
+        <table class="info-table">
+            <tr>
+                <th>Bloque I</th>
+                <td>Probabilidad (Semanas 1-6)</td>
+            </tr>
+            <tr>
+                <th>Tema Central</th>
+                <td>Encuadre y Conceptos Básicos: Experimento, Espacio Muestral, Evento.</td>
+            </tr>
+            <tr>
+                <th>Propósito de la Sesión</th>
+                <td>Establecer las reglas del curso y diferenciar intuitivamente entre riesgo e incertidumbre para definir los elementos básicos de la probabilidad.</td>
+            </tr>
+            <tr>
+                <th>Estrategia Andragógica</th>
+                <td>Aprendizaje Colaborativo y Lluvia de Ideas contextualizada.</td>
+            </tr>
+        </table>
+
+        <div class="section-title">
+            <span>I. APERTURA / ENCUADRE</span>
+            <span class="icon-clock">10 min</span>
+        </div>
+
+        <div class="activity-box">
+            <span class="activity-title">1. Presentación y Encuadre (5 min)</span>
+            <ul>
+                <li>Bienvenida y presentación del docente.</li>
+                <li>Breve explicación de la forma de evaluación: 
+                    <strong>Portafolio 40%, Exámenes 30%, Proyecto 20%, Actitudes 10%</strong>[cite: 252].
+                </li>
+            </ul>
+        </div>
+
+        <div class="activity-box">
+            <span class="activity-title">2. Actividad Detonadora: "Certeza vs. Azar" (5 min)</span>
+            <p>Se lanza la pregunta al grupo: <em>"¿Qué decisión tomaste hoy que implicaba un riesgo?"</em></p>
+            <div class="teacher-note">
+                <strong>Nota Psico-Pedagógica:</strong> Iniciar con experiencias personales reduce la ansiedad matemática y valida el conocimiento previo del adulto/estudiante.
+            </div>
+        </div>
+
+        <div class="section-title">
+            <span>II. DESARROLLO / GESTIÓN DEL CONOCIMIENTO</span>
+            <span class="icon-clock">25 min</span>
+        </div>
+
+        <div class="activity-box">
+            <span class="activity-title">3. Diagnóstico: Lluvia de Ideas "Riesgo e Incertidumbre" (10 min) </span>
+            <p><strong>Dinámica:</strong> En el pizarrón se divide en dos columnas: "Lo que controlo" (Determinista) y "Lo que no controlo" (Aleatorio).</p>
+            <ul>
+                <li>Los estudiantes aportan ejemplos (ej. El clima, ganar la lotería, calificación de un examen).</li>
+                <li><strong>Objetivo:</strong> Diferenciar intuitivamente el <em>Experimento Determinista</em> del <em>Experimento Aleatorio</em>.</li>
+            </ul>
+        </div>
+
+        <div class="activity-box">
+            <span class="activity-title">4. Definición Colaborativa de Conceptos Clave (15 min) </span>
+            <p>A partir de los ejemplos anteriores, se construyen las definiciones formales:</p>
+            <table class="info-table" style="margin-top:10px; font-size: 0.9em;">
+                <tr>
+                    <th style="width: 30%;">Concepto</th>
+                    <th>Definición Construida</th>
+                    <th>Ejemplo (Dado)</th>
+                </tr>
+                <tr>
+                    <td><strong>Experimento Aleatorio</strong></td>
+                    <td>Acción cuyo resultado no se puede predecir con certeza antes de realizarla.</td>
+                    <td>Lanzar un dado.</td>
+                </tr>
+                <tr>
+                    <td><strong>Espacio Muestral ($$\Omega$$ o S)</strong></td>
+                    <td>El conjunto de <em>todos</em> los posibles resultados.</td>
+                    <td>S = {1, 2, 3, 4, 5, 6}</td>
+                </tr>
+                <tr>
+                    <td><strong>Evento (E)</strong></td>
+                    <td>Un subconjunto del espacio muestral (un resultado específico o grupo de resultados).</td>
+                    <td>A = {Cae número par}</td>
+                </tr>
+            </table>
+            <div class="teacher-note">
+                <strong>Tip de Experto:</strong> Usa diagramas visuales simples en el pizarrón para representar el Espacio Muestral como un "Universo" contenedor.
+            </div>
+        </div>
+
+        <div class="section-title">
+            <span>III. CIERRE / EVALUACIÓN</span>
+            <span class="icon-clock">10 min</span>
+        </div>
+
+        <div class="activity-box">
+            <span class="activity-title">5. Verificación de Aprendizaje (Ticket de Salida)</span>
+            <p>Los estudiantes deben escribir en un papel (o participar oralmente) respondiendo:</p>
+            <p><em>"Menciona un experimento aleatorio de tu vida diaria y define su espacio muestral."</em></p>
+        </div>
+
+        <div class="activity-box">
+            <span class="activity-title">6. Asignación de Tarea (Flipped Classroom)</span>
+            <p>Investigar qué es un "Diagrama de Venn" para la próxima sesión (Sesión 2: Teoría de Conjuntos).</p>
+        </div>
+
+    </div>
+
+    <div class="footer-print">
+        &copy; JMGV-PTEL-2025. todos los derechos reservados
+    </div>
+
+</body>
+</html>

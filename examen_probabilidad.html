@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen: Probabilidad y Estadística</title>
+    <style>
+        /* Variables de color estilo Kahoot, con psicología del color para estadística */
+        :root {
+            --primary-bg: #f4f6f9;
+            --header-bg: #283593; /* Índigo: lógica, concentración y calma */
+            --text-main: #333333;
+            --text-light: #ffffff;
+            --q-bg: #ffffff;
+            --opt-a: #e21b3c; /* Rojo */
+            --opt-b: #1368ce; /* Azul */
+            --opt-c: #d89e00; /* Amarillo/Naranja */
+            --opt-d: #26890c; /* Verde */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--header-bg);
+            color: var(--text-light);
+            padding: 30px 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+        }
+
+        /* Campos de identificación limpios */
+        .student-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .info-group {
+            flex: 1;
+            min-width: 200px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-group label {
+            font-weight: bold;
+            font-size: 1.1rem;
+            white-space: nowrap;
+        }
+
+        .info-group input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--text-light);
+            color: var(--text-light);
+            font-size: 1.1rem;
+            padding: 5px;
+            outline: none;
+        }
+
+        .question-card {
+            background-color: var(--q-bg);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-left: 6px solid var(--header-bg);
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.2s, filter 0.2s;
+        }
+
+        .option-label:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+        }
+
+        .option-label input[type="radio"] {
+            margin-right: 15px;
+            transform: scale(1.5);
+            cursor: pointer;
+        }
+
+        .opt-0 { background-color: var(--opt-a); }
+        .opt-1 { background-color: var(--opt-b); }
+        .opt-2 { background-color: var(--opt-c); }
+        .opt-3 { background-color: var(--opt-d); }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            background-color: var(--header-bg);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: background 0.3s;
+        }
+
+        .submit-btn:hover {
+            background-color: #1a237e;
+        }
+
+        #result-container {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #d4edda;
+            color: #155724;
+            border-radius: 8px;
+            font-size: 1.5rem;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        /* =========================================================
+           CONFIGURACIÓN PERFECTA PARA IMPRESIÓN EN TAMAÑO CARTA
+           ========================================================= */
+        @media print {
+            @page { size: letter; margin: 2cm; }
+            body { background-color: white; color: black; }
+            .container { width: 100%; max-width: none; padding: 0; }
+            header { 
+                background-color: white !important; 
+                color: black !important; 
+                box-shadow: none; 
+                border-bottom: 2px solid black; 
+                border-radius: 0; 
+                padding: 10px 0 20px 0; 
+                margin-bottom: 20px; 
+            }
+            .student-info { background: none; padding: 0; }
+            .info-group input { border-bottom: 1px solid black; color: black; }
+            .question-card { 
+                box-shadow: none; 
+                border: 1px solid #ccc; 
+                border-left: none; 
+                padding: 15px; 
+                margin-bottom: 15px; 
+                page-break-inside: avoid; 
+                break-inside: avoid; 
+            }
+            .options-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .option-label { 
+                background-color: white !important; 
+                color: black !important; 
+                border: 1px solid #000; 
+                padding: 8px 10px; 
+            }
+            .submit-btn, #result-container { display: none !important; }
+            .footer-text { 
+                position: fixed; 
+                bottom: 0; 
+                width: 100%; 
+                border-top: 1px solid #ccc; 
+                padding-top: 5px; 
+            }
+        }
+
+        @media (max-width: 600px) {
+            .options-grid { grid-template-columns: 1fr; }
+            .info-group { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Examen unidad 1: Probabilidad y Estadística</h1>
+        <div class="student-info">
+            <div class="info-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" autocomplete="off">
+            </div>
+            <div class="info-group">
+                <label for="semestre">Semestre/Grupo:</label>
+                <input type="text" id="semestre" name="semestre" autocomplete="off">
+            </div>
+            <div class="info-group">
+                <label for="fecha">Fecha:</label>
+                <input type="text" id="fecha" name="fecha" autocomplete="off">
+            </div>
+        </div>
+    </header>
+
+    <form id="quiz-form">
+        <div id="questions-container"></div>
+        <button type="button" class="submit-btn" onclick="calificarExamen()">Calificar Examen</button>
+        <div id="result-container"></div>
+    </form>
+    
+    <div class="footer-text">
+        &copy; 2026 JMGV-PTEL Programa de probabilidad y estadística 2. Todos los derechos reservados.
+    </div>
+</div>
+
+<script>
+    // Base de datos de preguntas: Probabilidad y Estadística
+    const quizData = [
+        { 
+            question: "1. ¿Cómo se define el 'espacio muestral' en un experimento aleatorio?", 
+            options: ["El conjunto de todos los resultados posibles", "El resultado que ocurre con mayor frecuencia", "La probabilidad de que un evento no ocurra", "Un subconjunto de resultados favorables"], 
+            correct: 0 
+        },
+        { 
+            question: "2. ¿Para qué es especialmente útil utilizar un diagrama de árbol?", 
+            options: ["Para representar visualmente y organizar todos los resultados posibles de una secuencia de eventos", "Para calcular únicamente eventos mutuamente excluyentes", "Para graficar la frecuencia de datos estadísticos continuos", "Para evitar el cálculo de la probabilidad condicional"], 
+            correct: 0 
+        },
+        { 
+            question: "3. ¿A qué es equivalente matemáticamente el factorial de 5 (5!)?", 
+            options: ["120", "25", "15", "5"], 
+            correct: 0 
+        },
+        { 
+            question: "4. En una competencia de atletismo con 8 corredores, se premiarán el oro, plata y bronce. El cálculo para saber cuántos podios distintos pueden formarse corresponde a una:", 
+            options: ["Permutación, porque el orden de los ganadores sí importa", "Combinación, porque el orden de los ganadores sí importa", "Combinación, porque el orden de los ganadores no importa", "Permutación, porque el orden de los ganadores no importa"], 
+            correct: 0 
+        },
+        { 
+            question: "5. Tienes un grupo de 10 estudiantes y necesitas formar un comité de limpieza de 3 personas. Para saber cuántos comités distintos se pueden formar debes usar:", 
+            options: ["Combinaciones, porque el orden en que se elijan no cambia el comité", "Permutaciones, porque cada estudiante tiene un rol diferente", "Diagrama de dispersión", "El principio de eventos mutuamente excluyentes"], 
+            correct: 0 
+        },
+        { 
+            question: "6. Un coeficiente binomial (nCr) nos permite calcular el número de:", 
+            options: ["Subconjuntos de 'r' elementos que se pueden formar a partir de un conjunto de 'n' elementos, sin importar el orden", "Formas en que 'n' elementos pueden ordenarse en una fila", "Eventos dependientes en un experimento de 'r' pasos", "Resultados imposibles en un espacio muestral"], 
+            correct: 0 
+        },
+        { 
+            question: "7. Extraes una carta de una baraja, te la quedas, y luego extraes otra. La probabilidad de la segunda extracción cambió. ¿Cómo se llaman estos eventos?", 
+            options: ["Eventos dependientes", "Eventos independientes", "Eventos mutuamente excluyentes", "Eventos deterministas"], 
+            correct: 0 
+        },
+        { 
+            question: "8. Lanzas una moneda al aire y luego lanzas un dado. El resultado de la moneda no afecta en absoluto el resultado del dado. Estos son:", 
+            options: ["Eventos independientes", "Eventos dependientes", "Eventos mutuamente excluyentes", "Eventos complementarios"], 
+            correct: 0 
+        },
+        { 
+            question: "9. Al lanzar un dado regular, defines el Evento A como 'sacar un 2' y el Evento B como 'sacar un número impar'. Dado que no pueden ocurrir al mismo tiempo, son:", 
+            options: ["Eventos mutuamente excluyentes", "Eventos dependientes", "Eventos independientes", "Espacios muestrales iguales"], 
+            correct: 0 
+        },
+        { 
+            question: "10. ¿Cuál es el resultado de calcular las combinaciones de 4 elementos tomados de 2 en 2 (4C2)?", 
+            options: ["6", "12", "8", "24"], 
+            correct: 0 
+        }
+    ];
+
+    // Algoritmo Fisher-Yates para barajar las opciones de cada pregunta dinámicamente
+    quizData.forEach((q) => {
+        let optionsWithIndex = q.options.map((opt, index) => {
+            return { text: opt, isCorrect: (index === q.correct) };
+        });
+
+        for (let i = optionsWithIndex.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [optionsWithIndex[i], optionsWithIndex[j]] = [optionsWithIndex[j], optionsWithIndex[i]];
+        }
+
+        q.options = optionsWithIndex.map(opt => opt.text);
+        q.correct = optionsWithIndex.findIndex(opt => opt.isCorrect);
+    });
+
+    const container = document.getElementById('questions-container');
+
+    // Renderizar las 10 preguntas
+    quizData.forEach((q, index) => {
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        
+        let optionsHTML = '';
+        q.options.forEach((opt, i) => {
+            optionsHTML += `
+                <label class="option-label opt-${i}">
+                    <input type="radio" name="q${index}" value="${i}">
+                    <span>${opt}</span>
+                </label>
+            `;
+        });
+
+        card.innerHTML = `
+            <div class="question-text">${q.question}</div>
+            <div class="options-grid">
+                ${optionsHTML}
+            </div>
+        `;
+        container.appendChild(card);
+    });
+
+    // Lógica de calificación interactiva sobre 10
+    function calificarExamen() {
+        let score = 0;
+        let allAnswered = true;
+
+        quizData.forEach((q, index) => {
+            const selected = document.querySelector(`input[name="q${index}"]:checked`);
+            if (selected) {
+                if (parseInt(selected.value) === q.correct) {
+                    score++;
+                }
+            } else {
+                allAnswered = false;
+            }
+        });
+
+        const resultDiv = document.getElementById('result-container');
+        resultDiv.style.display = 'block';
+
+        if (!allAnswered) {
+            resultDiv.style.backgroundColor = '#fff3cd';
+            resultDiv.style.color = '#856404';
+            resultDiv.innerHTML = 'Por favor, asegúrate de responder las 10 preguntas antes de calificar.';
+            return;
+        }
+
+        const percentage = Math.round((score / quizData.length) * 100);
+        // Ajuste en la validación de calificación aprobatoria (6 de 10)
+        resultDiv.style.backgroundColor = score >= 6 ? '#d4edda' : '#f8d7da';
+        resultDiv.style.color = score >= 6 ? '#155724' : '#721c24';
+        resultDiv.innerHTML = `Tu calificación es: ${score} de 10 (${percentage}%)`;
+    }
+</script>
+
+</body>
+</html>
