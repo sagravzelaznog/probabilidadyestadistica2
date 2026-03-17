@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Class: Teorema de Bayes - JMGV</title>
+    
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+					window.MathJax = {
+									tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
+					};
+	</script>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #2980b9;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --bg-light: #ecf0f1;
+            /* Colores Kahoot */
+            --k-red: #e21b3c;
+            --k-blue: #1368ce;
+            --k-yellow: #d89e00;
+            --k-green: #26890c;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding-bottom: 60px; /* Espacio para el footer */
+        }
+
+        .container {
+            max-width: 215.9mm; /* Ancho de hoja carta */
+            margin: 20px auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* Controles de Pantalla */
+        .screen-controls {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            border-radius: 5px;
+        }
+
+        button.action-btn {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+            margin: 5px;
+        }
+
+        button.action-btn:hover { background-color: var(--primary); }
+
+        /* Campos de Identificación */
+        .student-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+            border: 2px solid var(--primary);
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
+
+        .input-group {
+            flex: 1 1 200px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            font-weight: bold;
+            font-size: 0.9em;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .input-group input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+
+        /* Tipografía y Secciones */
+        h1, h2, h3 { color: var(--primary); }
+        h1 { border-bottom: 3px solid var(--accent); padding-bottom: 10px; text-transform: uppercase; text-align: center; }
+        h2 { margin-top: 40px; border-left: 5px solid var(--secondary); padding-left: 10px; background-color: var(--bg-light); padding: 5px 10px; }
+
+        .concept-box {
+            background-color: #e8f4f8;
+            border-left: 4px solid var(--secondary);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .step-box {
+            background-color: #fdfefe;
+            border: 1px solid #d0d3d4;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* Detalles Ocultos (Respuestas) */
+        details {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        summary {
+            font-weight: bold;
+            color: var(--secondary);
+            cursor: pointer;
+            outline: none;
+            list-style: none; /* Oculta la flecha nativa en algunos nav */
+        }
+        summary::-webkit-details-marker { display: none; }
+        summary::before { content: "👁️ Revelar Respuesta"; display: inline-block; margin-right: 10px; }
+        details[open] summary::before { content: "🙈 Ocultar Respuesta"; }
+
+        .solution-content { margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 10px; }
+
+        /* Estilos Kahoot */
+        .kahoot-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .k-option {
+            color: white;
+            font-weight: bold;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+        }
+        
+        .k-red { background-color: var(--k-red); }
+        .k-blue { background-color: var(--k-blue); }
+        .k-yellow { background-color: var(--k-yellow); color: #333; }
+        .k-green { background-color: var(--k-green); }
+
+        .quiz-question {
+            background: white;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .quiz-question p { font-size: 1.2em; font-weight: bold; margin-bottom: 20px; }
+
+        /* Pie de página fijo */
+        .footer-fixed {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            text-align: center;
+            padding: 10px 0;
+            border-top: 1px solid #ccc;
+            font-size: 10px;
+            color: #7f8c8d;
+            z-index: 1000;
+        }
+
+        /* IMPRESIÓN PDF */
+        @media print {
+            body { background: none; margin: 0; padding: 0; }
+            .container { box-shadow: none; margin: 0; width: 100%; max-width: 100%; padding: 20px; }
+            .screen-controls { display: none; }
+            
+            /* Los inputs se ven como líneas para escribir */
+            input { border: none !important; border-bottom: 1px solid black !important; border-radius: 0 !important; background: transparent !important; }
+            
+            .footer-fixed { display: block; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            
+            .step-box, .quiz-question, details { page-break-inside: avoid; }
+            h2 { page-break-after: avoid; }
+            
+            @page { margin: 1cm; margin-bottom: 2cm; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="screen-controls no-print">
+        <strong>Modo de Vista:</strong>
+        <button class="action-btn" onclick="toggleAnswers(true)">Modo Profesor (Abrir todo para PDF)</button>
+        <button class="action-btn" onclick="toggleAnswers(false)">Modo Alumno (Ocultar respuestas)</button>
+        <button class="action-btn" onclick="window.print()" style="background-color: #27ae60;">🖨️ Imprimir PDF</button>
+    </div>
+
+    <div class="container">
+        
+        <div class="student-info">
+            <div class="input-group">
+                <label for="id">ID / Matrícula:</label>
+                <input type="text" id="id" placeholder="Ingresa tu ID">
+            </div>
+            <div class="input-group" style="flex: 2 1 300px;">
+                <label for="nombre">Nombre Completo:</label>
+                <input type="text" id="nombre" placeholder="Apellido Paterno, Materno, Nombres">
+            </div>
+            <div class="input-group">
+                <label for="semestre">Semestre:</label>
+                <input type="text" id="semestre" value="Sexto Semestre" readonly>
+            </div>
+            <div class="input-group">
+                <label for="fecha">Fecha:</label>
+                <input type="date" id="fecha">
+            </div>
+        </div>
+
+        <h1>Master Class: Teorema de Bayes</h1>
+        <p style="text-align: center; color: #7f8c8d; font-style: italic;">Pensamiento Estocástico e Inferencia Probabilística</p>
+
+        <h2>1. Definición</h2>
+        <div class="concept-box">
+            <p>El <strong>Teorema de Bayes</strong> es un modelo probabilístico que nos permite calcular la probabilidad de un evento teniendo información previa sobre ese evento. En el campo de la estadística, nos ayuda a realizar <em>inferencias</em> y actualizar nuestras creencias a medida que obtenemos nueva evidencia.</p>
+            <p><strong>Nota Andragógica:</strong> En la vida real lo usamos para ajustar nuestras expectativas. Pasamos del análisis clásico (diagrama de árbol) a la fórmula de Bayes para inferir causas a partir de efectos observados.</p>
+        </div>
+
+        <h2>2. Fórmula General</h2>
+        <div class="concept-box" style="text-align: center; font-size: 1.2em; background-color: #fcf3cf; border-left-color: #f1c40f;">
+            <p>La probabilidad de que ocurra $A$ dado que ya ocurrió $B$ es:</p>
+            $$P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)}$$
+            <p style="font-size: 0.8em; text-align: left; margin-top: 20px;">
+                <strong>Donde:</strong><br>
+                • $P(A|B)$: Probabilidad a posteriori (Lo que buscamos).<br>
+                • $P(B|A)$: Probabilidad condicional de la evidencia.<br>
+                • $P(A)$: Probabilidad a priori.<br>
+                • $P(B)$: Probabilidad Total de la evidencia. $P(B) = P(B|A)P(A) + P(B|A^c)P(A^c)$
+            </p>
+        </div>
+
+        <h2>3. Ejemplos Paso a Paso</h2>
+
+        <div class="step-box">
+            <h3>Ejemplo 1: Detección Tecnológica (Filtro Anti-Spam)</h3>
+            <p><strong>El problema:</strong> Un servidor de correo sabe que el $20\%$ de los correos que recibe son Spam ($S$). El filtro detecta que la palabra "Oferta" ($O$) aparece en el $80\%$ de los correos Spam, pero también aparece en el $10\%$ de los correos legítimos ($S^c$). Si un correo contiene la palabra "Oferta", ¿cuál es la probabilidad de que sea Spam?</p>
+            
+            <p><strong>Paso 1: Identificar las probabilidades dadas.</strong></p>
+            <ul>
+                <li>$P(S) = 0.20$ (Probabilidad previa de Spam)</li>
+                <li>$P(S^c) = 0.80$ (Probabilidad de correo legítimo)</li>
+                <li>$P(O|S) = 0.80$ (Probabilidad de "Oferta" dado que es Spam)</li>
+                <li>$P(O|S^c) = 0.10$ (Probabilidad de "Oferta" dado que es legítimo)</li>
+            </ul>
+
+            <p><strong>Paso 2: Calcular la Probabilidad Total de la evidencia $P(O)$.</strong></p>
+            $$P(O) = [P(O|S) \cdot P(S)] + [P(O|S^c) \cdot P(S^c)]$$
+            $$P(O) = [0.80 \cdot 0.20] + [0.10 \cdot 0.80] = 0.16 + 0.08 = 0.24$$
+
+            <p><strong>Paso 3: Aplicar el Teorema de Bayes.</strong></p>
+            $$P(S|O) = \frac{P(O|S) \cdot P(S)}{P(O)} = \frac{0.16}{0.24} = 0.6667$$
+            <p><strong>Conclusión:</strong> Hay un <strong>66.67%</strong> de probabilidad de que el correo sea Spam.</p>
+        </div>
+
+        <div class="step-box">
+            <h3>Ejemplo 2: Casos Médicos (Falsos Positivos)</h3>
+            <p><strong>El problema:</strong> Una enfermedad rara afecta al $1\%$ de la población ($E$). Existe una prueba médica que da positivo ($+$) en el $99\%$ de los casos si el paciente está enfermo (sensibilidad). Sin embargo, da un "falso positivo" en el $5\%$ de las personas sanas ($E^c$). Si una persona da positivo, ¿cuál es la probabilidad real de que tenga la enfermedad?</p>
+            
+            <p><strong>Aplicación directa de Bayes:</strong></p>
+            $$P(E|+) = \frac{P(+|E) \cdot P(E)}{P(+|E) \cdot P(E) + P(+|E^c) \cdot P(E^c)}$$
+            $$P(E|+) = \frac{(0.99)(0.01)}{(0.99)(0.01) + (0.05)(0.99)}$$
+            $$P(E|+) = \frac{0.0099}{0.0099 + 0.0495} = \frac{0.0099}{0.0594} \approx 0.1666$$
+            <p><strong>Conclusión Psicológica:</strong> A pesar de dar positivo en una prueba del 99% de efectividad, la probabilidad real es solo del <strong>16.66%</strong> debido a la rareza de la enfermedad. ¡Esto es el corazón de la inferencia Bayesiana!</p>
+        </div>
+
+        <h2>4. Ejercicios Prácticos (Respuestas Ocultas)</h2>
+        
+        <div class="step-box">
+            <strong>Ejercicio 1: Las Máquinas de la Fábrica</strong>
+            <p>La máquina $A$ fabrica el $60\%$ de los tornillos, y la máquina $B$ el $40\%$. El $2\%$ de los tornillos de $A$ son defectuosos ($D$), y el $5\%$ de los de $B$ también lo son. Si sacas un tornillo al azar y resulta ser defectuoso, ¿cuál es la probabilidad de que lo haya fabricado la máquina $B$?</p>
+            <details>
+                <summary></summary>
+                <div class="solution-content">
+                    <p>Buscamos $P(B|D)$.</p>
+                    <p>1. $P(D) = (0.02 \cdot 0.60) + (0.05 \cdot 0.40) = 0.012 + 0.020 = 0.032$</p>
+                    <p>2. $P(B|D) = \frac{P(D|B) \cdot P(B)}{P(D)} = \frac{0.020}{0.032} = 0.625$</p>
+                    <p><strong>Respuesta: 62.5%</strong></p>
+                </div>
+            </details>
+        </div>
+
+        <div class="step-box">
+            <strong>Ejercicio 2: El Pronóstico del Clima</strong>
+            <p>La probabilidad de que llueva mañana es del $30\%$. Si llueve, la probabilidad de que la mañana esté nublada es del $90\%$. Si no llueve, la probabilidad de nubes en la mañana es del $20\%$. Te levantas y la mañana está nublada. ¿Cuál es la probabilidad de que llueva más tarde?</p>
+            <details>
+                <summary></summary>
+                <div class="solution-content">
+                    <p>Buscamos $P(\text{Lluvia} | \text{Nubes})$.</p>
+                    <p>1. $P(\text{Nubes}) = (0.90 \cdot 0.30) + (0.20 \cdot 0.70) = 0.27 + 0.14 = 0.41$</p>
+                    <p>2. $P(\text{Lluvia} | \text{Nubes}) = \frac{0.27}{0.41} \approx 0.6585$</p>
+                    <p><strong>Respuesta: 65.85%</strong></p>
+                </div>
+            </details>
+        </div>
+
+        <h2>5. Actividades de Profundización (Paso a Paso)</h2>
+
+        <div class="step-box">
+            <strong>Actividad Guiada 1: El Test de Drogas en Atletas</strong>
+            <p>En una liga deportiva, el $2\%$ de los atletas usa sustancias prohibidas ($D$). Una prueba detecta el uso de drogas el $95\%$ de las veces si el atleta las usa, pero da falso positivo el $3\%$ de las veces en atletas limpios. Plantea el diagrama mental y resuelve: Si el test es positivo, ¿es culpable el atleta?</p>
+            <details>
+                <summary></summary>
+                <div class="solution-content">
+                    <p><strong>Paso 1: Planteamiento A priori</strong></p>
+                    <ul>
+                        <li>$P(D) = 0.02$ (Culpables) $\rightarrow P(D^c) = 0.98$ (Limpios)</li>
+                        <li>$P(+|D) = 0.95$ (Sensibilidad)</li>
+                        <li>$P(+|D^c) = 0.03$ (Falso Positivo)</li>
+                    </ul>
+                    <p><strong>Paso 2: Ley de Probabilidad Total para $P(+)$</strong></p>
+                    $$P(+) = (0.95 \cdot 0.02) + (0.03 \cdot 0.98) = 0.019 + 0.0294 = 0.0484$$
+                    <p><strong>Paso 3: Bayes</strong></p>
+                    $$P(D|+) = \frac{0.019}{0.0484} \approx 0.3925$$
+                    <p><strong>Solución Pedagógica:</strong> La probabilidad es del <strong>39.25%</strong>. Andragógicamente, esto demuestra a los estudiantes el riesgo estadístico de culpar a alguien solo por un test (Inferencia racional).</p>
+                </div>
+            </details>
+        </div>
+
+        <div class="step-box">
+            <strong>Actividad Guiada 2: Las Inversiones de Riesgo</strong>
+            <p>Un inversor sabe que el $40\%$ de las startups en las que invierte fracasan. De las que fracasan, el $70\%$ tenían un modelo de negocio B2C. De las que tienen éxito, el $20\%$ tenían un modelo B2C. Si evalúa una startup B2C, ¿cuál es la probabilidad de que sea un éxito?</p>
+            <details>
+                <summary></summary>
+                <div class="solution-content">
+                    <p>Buscamos $P(\text{Éxito} | B2C)$.</p>
+                    <p>Sabemos: $P(\text{Fracaso}) = 0.40 \rightarrow P(\text{Éxito}) = 0.60$</p>
+                    <p>$P(B2C | \text{Fracaso}) = 0.70$ y $P(B2C | \text{Éxito}) = 0.20$</p>
+                    <p><strong>Probabilidad Total de ser B2C:</strong></p>
+                    $$P(B2C) = (0.70 \cdot 0.40) + (0.20 \cdot 0.60) = 0.28 + 0.12 = 0.40$$
+                    <p><strong>Teorema de Bayes:</strong></p>
+                    $$P(\text{Éxito} | B2C) = \frac{0.20 \cdot 0.60}{0.40} = \frac{0.12}{0.40} = 0.30$$
+                    <p><strong>Respuesta:</strong> Solo el <strong>30%</strong> de probabilidad de éxito. ¡Es una inferencia crucial para los negocios!</p>
+                </div>
+            </details>
+        </div>
+
+        <h2>6. Repaso Estilo Kahoot! 🎮</h2>
+        <p>Selecciona la respuesta correcta para cada premisa (Colorea o encierra tu respuesta).</p>
+
+        <div class="quiz-question">
+            <p>1. El Teorema de Bayes calcula una probabilidad...</p>
+            <div class="kahoot-grid">
+                <div class="k-option k-red">A) A priori</div>
+                <div class="k-option k-blue">B) A posteriori</div>
+                <div class="k-option k-yellow">C) Frecuencial simple</div>
+                <div class="k-option k-green">D) Imposible</div>
+            </div>
+            <details style="text-align: left; margin-top: 15px;"><summary></summary><div class="solution-content"><strong>Respuesta Correcta: B (A posteriori)</strong>, porque actualiza la probabilidad después de conocer la evidencia.</div></details>
+        </div>
+
+        <div class="quiz-question">
+            <p>2. En la fórmula $P(A|B)$, el evento "B" representa:</p>
+            <div class="kahoot-grid">
+                <div class="k-option k-red">A) La incógnita</div>
+                <div class="k-option k-blue">B) El Espacio Muestral Total</div>
+                <div class="k-option k-yellow">C) La nueva evidencia (Lo que ya ocurrió)</div>
+                <div class="k-option k-green">D) El complemento</div>
+            </div>
+            <details style="text-align: left; margin-top: 15px;"><summary></summary><div class="solution-content"><strong>Respuesta Correcta: C</strong>. La línea "|" significa "dado que". B es la condición o evidencia observada.</div></details>
+        </div>
+
+        <div class="quiz-question">
+            <p>3. ¿Para qué se utiliza el Teorema de Bayes en contextos reales? </p>
+            <div class="kahoot-grid">
+                <div class="k-option k-red">A) Medir áreas bajo la curva Normal</div>
+                <div class="k-option k-blue">B) Detección de Spam y diagnósticos médicos</div>
+                <div class="k-option k-yellow">C) Sólo para lanzar monedas</div>
+                <div class="k-option k-green">D) Calcular permutaciones</div>
+            </div>
+            <details style="text-align: left; margin-top: 15px;"><summary></summary><div class="solution-content"><strong>Respuesta Correcta: B</strong>. Son inferencias lógicas bajo incertidumbre basadas en síntomas o palabras clave.</div></details>
+        </div>
+
+        <div class="quiz-question">
+            <p>4. El denominador de la fórmula de Bayes representa:</p>
+            <div class="kahoot-grid">
+                <div class="k-option k-red">A) La Probabilidad Total de la evidencia</div>
+                <div class="k-option k-blue">B) La desviación estándar</div>
+                <div class="k-option k-yellow">C) El evento excluyente</div>
+                <div class="k-option k-green">D) 1 siempre</div>
+            </div>
+            <details style="text-align: left; margin-top: 15px;"><summary></summary><div class="solution-content"><strong>Respuesta Correcta: A</strong>. $P(B)$ es la probabilidad total de que ocurra la evidencia por cualquiera de sus causas.</div></details>
+        </div>
+
+        <div class="quiz-question">
+            <p>5. "Un falso positivo médico" significa que:</p>
+            <div class="kahoot-grid">
+                <div class="k-option k-red">A) La persona está enferma y da positivo</div>
+                <div class="k-option k-blue">B) La persona está enferma y da negativo</div>
+                <div class="k-option k-yellow">C) La persona está sana y da positivo</div>
+                <div class="k-option k-green">D) La persona está sana y da negativo</div>
+            </div>
+            <details style="text-align: left; margin-top: 15px;"><summary></summary><div class="solution-content"><strong>Respuesta Correcta: C</strong>. Es el componente $P(+|E^c)$, crucial para no sobreestimar riesgos en Bayes.</div></details>
+        </div>
+
+    </div>
+
+    <div class="footer-fixed">
+        &copy; JMGV-PTEL-2025. todos los derechos reservados
+    </div>
+
+    <script>
+        function toggleAnswers(show) {
+            const detailsElements = document.querySelectorAll('details');
+            detailsElements.forEach(el => {
+                if(show) {
+                    el.setAttribute('open', '');
+                } else {
+                    el.removeAttribute('open');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
