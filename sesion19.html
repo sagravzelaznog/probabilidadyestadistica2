@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sesión 19: Variables Aleatorias - JMGV</title>
+    <style>
+        :root {
+            --primary: #1f3a93;
+            --secondary: #3498db;
+            --accent: #f39c12;
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+            --k-red: #e21b3c;
+            --k-blue: #1368ce;
+            --k-yellow: #d89e00;
+            --k-green: #26890c;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding-bottom: 50px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        header {
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+
+        h1, h2, h3 { color: var(--primary); }
+        
+        .header-info {
+            display: flex;
+            justify-content: space-between;
+            color: #555;
+            font-size: 0.95em;
+        }
+
+        /* Estilos del contenido */
+        .definition-box {
+            background-color: #e8f4f8;
+            border-left: 5px solid var(--secondary);
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 4px;
+        }
+
+        .example-box, .exercise-box, .activity-box {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+
+        .activity-box { border-color: var(--accent); border-width: 2px; }
+
+        /* Estilos Kahoot */
+        .quiz-container { margin-top: 40px; }
+        .question-card {
+            background: #fff;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .question-card h4 { font-size: 1.2em; margin-top: 0; }
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .option {
+            color: white;
+            font-weight: bold;
+            padding: 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .opt-a { background-color: var(--k-red); }
+        .opt-b { background-color: var(--k-blue); }
+        .opt-c { background-color: var(--k-yellow); color: #333; }
+        .opt-d { background-color: var(--k-green); }
+
+        /* Tips para el Maestro (Ocultos por defecto) */
+        .teacher-tip {
+            display: none; /* Oculto para el alumno */
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px dashed #ffeeba;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            font-style: italic;
+        }
+        .teacher-tip::before {
+            content: "👨‍🏫 Tip Docente (JMGV): ";
+            font-weight: bold;
+        }
+
+        .controls {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            background-color: var(--secondary);
+            color: white;
+        }
+        button:hover { background-color: var(--primary); }
+
+        /* Claves de Respuesta */
+        .answer-key {
+            display: none;
+            background: #eafaf1;
+            padding: 15px;
+            border: 1px solid #a9dfbf;
+            border-radius: 5px;
+            margin-top: 30px;
+        }
+
+        /* Formato de Impresión PDF */
+        @media print {
+            body { background: none; margin: 0; padding: 0; }
+            .container { box-shadow: none; border: none; padding: 10px; max-width: 100%; }
+            .controls { display: none; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .question-card, .example-box, .exercise-box { page-break-inside: avoid; }
+            
+            /* Pie de página fijo en impresión */
+            .footer-print {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                text-align: center;
+                font-size: 10px;
+                color: #555;
+                padding: 10px 0;
+                border-top: 1px solid #ccc;
+                background: white;
+            }
+            @page { margin: 15mm; margin-bottom: 25mm; }
+        }
+
+        /* Footer pantalla */
+        .footer-screen {
+            display: none;
+        }
+        @media screen {
+            .footer-print { display: none; }
+            .footer-screen {
+                display: block;
+                text-align: center;
+                margin-top: 40px;
+                font-size: 12px;
+                color: #888;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls no-print">
+        <button onclick="unlockTeacherMode()">🔒 Modo Docente</button>
+        <button onclick="toggleAnswers()">👁️ Mostrar/Ocultar Clave</button>
+        <button onclick="window.print()" style="background-color: #27ae60;">🖨️ Imprimir PDF</button>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>Variables Aleatorias</h1>
+            <div class="header-info">
+                <span><strong>Asignatura:</strong> Probabilidad y Estadística II</span>
+                <span><strong>Bloque II:</strong> Distribuciones de Probabilidad</span>
+                <span><strong>Semana:</strong> 7 | <strong>Sesión:</strong> 19</span>
+            </div>
+            <div class="header-info" style="margin-top: 5px;">
+                <span><strong>Alumno:</strong> ____________________________________</span>
+                <span><strong>Fecha:</strong> ______________</span>
+            </div>
+        </header>
+
+        <h2>1. Definición</h2>
+        <div class="definition-box">
+            <p>Una <strong>Variable Aleatoria (VA)</strong> es una regla o función que asigna un valor numérico a cada resultado posible de un experimento aleatorio. En otras palabras, traduce eventos del mundo real a números para poder analizarlos estadísticamente.</p>
+            <ul>
+                <li><strong>Variable Aleatoria Discreta (VAD):</strong> Toma valores enteros o "saltos" cuantificables. Proviene generalmente de <em>contar</em>. (Ej. 0, 1, 2, 3...).</li>
+                <li><strong>Variable Aleatoria Continua (VAC):</strong> Puede tomar cualquier valor dentro de un intervalo numérico continuo, incluyendo decimales infinitos. Proviene generalmente de <em>medir</em>.</li>
+            </ul>
+        </div>
+        <div class="teacher-tip">
+            Andragogía: Los adultos entienden mejor los conceptos abstractos si los vinculan con acciones físicas. Asocia "Discreta" con el verbo CONTAR (usar los dedos) y "Continua" con el verbo MEDIR (usar una cinta métrica o báscula).
+        </div>
+
+        <h2>2. Ejemplos Prácticos</h2>
+        <div class="example-box">
+            <strong>Ejemplo 1 (Discreta):</strong> El número de estudiantes que asisten a la clase hoy. <br>
+            <em>Por qué:</em> Puedes contar 25 o 26 estudiantes, pero no 25.4 estudiantes.
+        </div>
+        <div class="example-box">
+            <strong>Ejemplo 2 (Continua):</strong> El peso exacto de tu mochila escolar. <br>
+            <em>Por qué:</em> Al medirla en una báscula precisa, podría pesar 4.253 kg. Puede tomar cualquier valor decimal.
+        </div>
+        <div class="example-box">
+            <strong>Ejemplo 3 (Discreta):</strong> La cantidad de computadoras defectuosas en el laboratorio de informática. <br>
+            <em>Por qué:</em> Se cuentan por unidades enteras (0, 1, 2 computadoras).
+        </div>
+
+        <h2>3. Ejercicios de Clasificación</h2>
+        <p>Instrucción: Identifica si las siguientes variables son Discretas (Escribe "D") o Continuas (Escribe "C").</p>
+        <div class="exercise-box">
+            1. El tiempo exacto que le toma a un estudiante correr 100 metros en la clase de educación física. [ ___ ]
+        </div>
+        <div class="exercise-box">
+            2. El número de libros de matemáticas disponibles en la biblioteca escolar. [ ___ ]
+        </div>
+        <div class="exercise-box">
+            3. La temperatura ambiental dentro del salón de clases a las 12:00 p.m. [ ___ ]
+        </div>
+        <div class="teacher-tip">
+            Problemas de aprendizaje: Si un alumno confunde el ejercicio 1, recuérdale que el cronómetro marca milisegundos (medición continua del tiempo). El tiempo, peso, volumen y distancia casi siempre son variables continuas.
+        </div>
+
+        <h2>4. Actividades de Aplicación (Contexto Escolar y Laboral)</h2>
+        <div class="activity-box">
+            <strong>Actividad 1: Observación Escolar</strong><br>
+            Observa tu entorno en este salón de clases. Escribe dos variables aleatorias discretas y dos continuas que puedas identificar ahora mismo.
+            <br><br><em>Discretas:</em> 1. ______________________ 2. ______________________
+            <br><em>Continuas:</em> 1. ______________________ 2. ______________________
+        </div>
+        <div class="activity-box">
+            <strong>Actividad 2: Rol Laboral</strong><br>
+            Imagina que eres el gerente de una cafetería. Define una variable aleatoria discreta relacionada con tus ventas y una variable continua relacionada con tus insumos.
+            <br><br><em>VAD (Ventas):</em> __________________________________________________
+            <br><em>VAC (Insumos):</em> _________________________________________________
+        </div>
+        <div class="activity-box">
+            <strong>Actividad 3: Debate Rápido</strong><br>
+            Analiza la variable "Tu calificación final en el semestre". ¿Es discreta o continua? Justifica tu respuesta brevemente.
+            <br><br><em>Justificación:</em> _________________________________________________
+        </div>
+        <div class="teacher-tip">
+            Atención Psicológica: La Actividad 3 genera disonancia cognitiva intencional. La calificación suele ser discreta en la boleta (ej. 8, 9, 10), pero continua durante el cálculo del promedio (ej. 8.75). Fomenta el debate, no hay una respuesta absoluta si no se define bien el contexto.
+        </div>
+
+        <div class="quiz-container">
+            <h2>5. Quiz de Comprobación 🎮</h2>
+            <p>Selecciona la opción correcta coloreando o encerrando en un círculo tu respuesta.</p>
+
+            <div class="question-card">
+                <h4>1. ¿Qué verbo se asocia comúnmente con las variables discretas?</h4>
+                <div class="options-grid">
+                    <div class="option opt-a">A) Medir</div>
+                    <div class="option opt-b">B) Contar</div>
+                    <div class="option opt-c">C) Pesar</div>
+                    <div class="option opt-d">D) Estimar</div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <h4>2. ¿Qué tipo de variable es "la cantidad de alumnos aprobados"?</h4>
+                <div class="options-grid">
+                    <div class="option opt-a">A) Continua</div>
+                    <div class="option opt-b">B) Nominal</div>
+                    <div class="option opt-c">C) Discreta</div>
+                    <div class="option opt-d">D) Aleatoria nula</div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <h4>3. El "volumen de agua en un tinaco" es una variable...</h4>
+                <div class="options-grid">
+                    <div class="option opt-a">A) Discreta</div>
+                    <div class="option opt-b">B) Binomial</div>
+                    <div class="option opt-c">C) Continua</div>
+                    <div class="option opt-d">D) Frecuencial</div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <h4>4. Las variables continuas admiten números...</h4>
+                <div class="options-grid">
+                    <div class="option opt-a">A) Solo enteros positivos</div>
+                    <div class="option opt-b">B) Decimales o fraccionarios</div>
+                    <div class="option opt-c">C) Únicamente negativos</div>
+                    <div class="option opt-d">D) Solo el 0 y el 1</div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <h4>5. En un examen de 10 preguntas, el "número de aciertos" es una variable:</h4>
+                <div class="options-grid">
+                    <div class="option opt-a">A) Continua</div>
+                    <div class="option opt-b">B) Infinita</div>
+                    <div class="option opt-c">C) Discreta</div>
+                    <div class="option opt-d">D) Aleatoria de Poisson</div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <h4>6. El "tiempo que tarda el internet en cargar esta página" es:</h4>
+                <div class="options-grid">
+                    <div class="option opt-a">A) Una constante</div>
+                    <div class="option opt-b">B) V. A. Discreta</div>
+                    <div class="option opt-c">C) V. A. Continua</div>
+                    <div class="option opt-d">D) Un evento seguro</div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <h4>7. "El número de goles en un partido de fútbol" es un ejemplo claro de variable:</h4>
+                <div class="options-grid">
+                    <div class="option opt-a">A) Discreta</div>
+                    <div class="option opt-b">B) Continua</div>
+                    <div class="option opt-c">C) Cualitativa</div>
+                    <div class="option opt-d">D) Incierta</div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <h4>8. La "distancia en kilómetros de tu casa a la escuela" es:</h4>
+                <div class="options-grid">
+                    <div class="option opt-a">A) Exacta</div>
+                    <div class="option opt-b">B) Continua</div>
+                    <div class="option opt-c">C) Discreta</div>
+                    <div class="option opt-d">D) Axiomática</div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <h4>9. ¿Cuál de las siguientes es una variable discreta?</h4>
+                <div class="options-grid">
+                    <div class="option opt-a">A) La velocidad de un auto</div>
+                    <div class="option opt-b">B) El peso de un perro</div>
+                    <div class="option opt-c">C) La altura de un árbol</div>
+                    <div class="option opt-d">D) El número de mascotas</div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <h4>10. Toda Variable Aleatoria busca traducir eventos del mundo real a:</h4>
+                <div class="options-grid">
+                    <div class="option opt-a">A) Gráficas de pastel</div>
+                    <div class="option opt-b">B) Valores numéricos</div>
+                    <div class="option opt-c">C) Teorías complejas</div>
+                    <div class="option opt-d">D) Porcentajes absolutos</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="answer-key" id="answerKey">
+            <h3>Clave de Respuestas</h3>
+            <p><strong>Ejercicios de Clasificación:</strong> 1 (C), 2 (D), 3 (C)</p>
+            <p><strong>Quiz Kahoot:</strong> 
+                1(B), 2(C), 3(C), 4(B), 5(C), 6(C), 7(A), 8(B), 9(D), 10(B)
+            </p>
+        </div>
+
+    </div>
+
+    <div class="footer-screen">
+        &copy; JMGV-PTEL-2025. probabilidad y estadistica. Todos los derechos reservados
+    </div>
+    
+    <div class="footer-print">
+        &copy; JMGV-PTEL-2025. probabilidad y estadistica. Todos los derechos reservados
+    </div>
+
+    <script>
+        function unlockTeacherMode() {
+            let pwd = prompt("Ingrese la clave de acceso docente:");
+            if (pwd === "1983") {
+                let tips = document.querySelectorAll('.teacher-tip');
+                tips.forEach(tip => tip.style.display = 'block');
+                alert("Modo docente activado con éxito. Notas visibles.");
+            } else {
+                if(pwd !== null) alert("Clave incorrecta. Acceso denegado.");
+            }
+        }
+
+        function toggleAnswers() {
+									
+            let key = document.getElementById('answerKey');
+												let pwd = prompt("Ingrese la clave de acceso docente:");
+            if (pwd === "1983") {
+            if (key.style.display === 'block') {
+                key.style.display = 'none';
+            } else {
+                key.style.display = 'block';
+            }
+            } else {
+                if(pwd !== null) alert("Clave incorrecta. Acceso denegado.");
+            }
+        }
+    </script>
+</body>
+</html>
