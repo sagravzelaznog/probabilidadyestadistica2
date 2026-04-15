@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masterclass: Distribución Binomial</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="body-binom">
+
+    <header class="header-binom">
+        <h1 id="title-binom">Estadística Inferencial: Distribución Binomial</h1>
+        <p>Modelando el Éxito y el Fracaso</p>
+    </header>
+
+    <main class="main-binom">
+        <section class="theory-binom">
+            <h2>1. Definición y Condiciones</h2>
+            <p>La <strong>Distribución Binomial</strong> es una distribución de probabilidad discreta que cuenta el número de éxitos en una secuencia de ensayos de Bernoulli independientes entre sí.</p>
+            
+            <div class="note-binom teacher-note-binom">
+                <strong>👨‍🏫 Tip Maestro (Andragogía):</strong> Antes de mostrar la fórmula, pregunta a los alumnos: <em>"Si lanzo una moneda trucada 10 veces, ¿cómo calculo la probabilidad de que caiga águila exactamente 7 veces?"</em>. Esto ancla la necesidad matemática a una situación empírica.
+            </div>
+
+            <h3>Para aplicar este modelo, deben cumplirse 4 condiciones:</h3>
+            <ul>
+                <li>El experimento consta de una secuencia de <strong>n</strong> ensayos idénticos.</li>
+                <li>En cada ensayo hay solo dos resultados posibles: <strong>Éxito (p)</strong> o <strong>Fracaso (q)</strong>.</li>
+                <li>La probabilidad de éxito \( p \) es constante de un ensayo a otro, y \( p + q = 1 \).</li>
+                <li>Los ensayos son independientes (el resultado de uno no afecta al otro).</li>
+            </ul>
+
+            <div class="formula-box-binom">
+                <p>La probabilidad de obtener exactamente \( x \) éxitos en \( n \) ensayos es:</p>
+                <p class="big-math">\[ P(X = x) = \binom{n}{x} p^x q^{n-x} \]</p>
+                <p>Donde el coeficiente binomial se calcula como: \( \binom{n}{x} = \frac{n!}{x!(n-x)!} \)</p>
+            </div>
+        </section>
+
+        <section class="simulator-binom">
+            <h2>2. Ejercicio Práctico: El Simulador Binomial</h2>
+            <p>Utiliza los controles para observar cómo cambian las probabilidades al modificar el número de ensayos (\(n\)) y la probabilidad de éxito (\(p\)).</p>
+            
+            <div class="note-binom teacher-note-binom">
+                <strong>👨‍🏫 Tip Maestro:</strong> Pide a los alumnos que pongan \( p = 0.5 \) (moneda justa) y calculen la probabilidad de obtener exactamente la mitad de éxitos. Se sorprenderán de que no es el 100%, ni siquiera está cerca. Esto rompe preconcepciones erróneas sobre la probabilidad media.
+            </div>
+
+            <div class="controls-binom">
+                <label>Ensayos (n): <span id="val-n-binom">10</span>
+                    <input type="range" id="input-n-binom" min="1" max="20" value="10">
+                </label>
+                <label>Prob. de Éxito (p): <span id="val-p-binom">0.5</span>
+                    <input type="range" id="input-p-binom" min="0.1" max="0.9" step="0.1" value="0.5">
+                </label>
+                <label>Éxitos buscados (x): <span id="val-x-binom">5</span>
+                    <input type="range" id="input-x-binom" min="0" max="10" value="5">
+                </label>
+            </div>
+
+            <div class="result-box-binom" id="calc-result-binom">
+                P(X = 5) = Calculando...
+            </div>
+        </section>
+
+        <section class="quiz-section-binom" id="quiz-container-binom">
+            <h2>3. Demuestra tu Conocimiento (Quiz)</h2>
+            <div id="kahoot-board-binom" class="kahoot-board-binom">
+                <button class="btn-start-binom" onclick="startQuizBinom()">Comenzar Reto Binomial</button>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer-binom">
+        copyright &copy;jmgv-ptel- 2026. masterclass distibucion binomial. todos los derechos reservados
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

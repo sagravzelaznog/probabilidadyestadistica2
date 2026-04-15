@@ -1,0 +1,167 @@
+/* =========================================
+   SESIÓN: DISTRIBUCIÓN BINOMIAL
+   Identificador: -binom
+========================================= */
+
+.body-binom {
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	background-color: #f0f4f8;
+	color: #334e68;
+	margin: 0;
+	padding: 0;
+}
+
+.header-binom {
+	background: linear-gradient(135deg, #102a43 0%, #243b53 100%);
+	color: #f0f4f8;
+	padding: 2rem;
+	text-align: center;
+	cursor: pointer; /* Indica que hay interacción para el Modo Maestro */
+	box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.main-binom {
+	max-width: 900px;
+	margin: 2rem auto;
+	padding: 0 1rem;
+}
+
+.theory-binom, .simulator-binom, .quiz-section-binom {
+	background: white;
+	border-radius: 8px;
+	padding: 2rem;
+	margin-bottom: 2rem;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.theory-binom h2, .simulator-binom h2, .quiz-section-binom h2 {
+	color: #102a43;
+	border-bottom: 2px solid #627d98;
+	padding-bottom: 0.5rem;
+}
+
+.formula-box-binom {
+	background-color: #dceefb;
+	border-left: 5px solid #2680c2;
+	padding: 1.5rem;
+	margin: 1.5rem 0;
+	text-align: center;
+	border-radius: 4px;
+}
+
+.big-math {
+	font-size: 1.5em;
+	color: #102a43;
+}
+
+/* Modo Maestro Oculto */
+.teacher-note-binom {
+	display: none; /* Oculto por defecto */
+	background-color: #fff3c4;
+	border-left: 5px solid #f0b429;
+	padding: 1rem;
+	margin: 1rem 0;
+	color: #8d2b0b;
+	border-radius: 4px;
+	font-weight: 500;
+}
+
+/* Simulador */
+.controls-binom {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 1.5rem;
+	margin-bottom: 1.5rem;
+}
+
+.controls-binom label {
+	display: flex;
+	flex-direction: column;
+	font-weight: bold;
+}
+
+.controls-binom input[type=range] {
+	margin-top: 0.5rem;
+	accent-color: #2680c2;
+}
+
+.result-box-binom {
+	background-color: #102a43;
+	color: #f0f4f8;
+	padding: 1.5rem;
+	text-align: center;
+	font-size: 1.5rem;
+	font-weight: bold;
+	border-radius: 8px;
+}
+
+/* Quiz Kahoot Style */
+.kahoot-board-binom {
+	text-align: center;
+}
+
+.btn-start-binom {
+	background-color: #27ae60;
+	color: white;
+	border: none;
+	padding: 1rem 2rem;
+	font-size: 1.2rem;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: transform 0.2s;
+}
+
+.btn-start-binom:hover {
+	transform: scale(1.05);
+}
+
+.quiz-grid-binom {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 1rem;
+	margin-top: 1.5rem;
+}
+
+.ans-btn-binom {
+	padding: 1.5rem;
+	font-size: 1.1rem;
+	font-weight: bold;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 80px;
+	transition: opacity 0.2s;
+}
+
+.ans-btn-binom:hover {
+	opacity: 0.9;
+}
+
+.ans-btn-binom.c1 { background-color: #e21b3c; } /* Rojo */
+.ans-btn-binom.c2 { background-color: #1368ce; } /* Azul */
+.ans-btn-binom.c3 { background-color: #d89e00; } /* Amarillo */
+.ans-btn-binom.c4 { background-color: #26890c; } /* Verde */
+
+.quiz-question-binom {
+	font-size: 1.5rem;
+	margin-bottom: 2rem;
+}
+
+.footer-binom {
+	text-align: center;
+	padding: 2rem;
+	background-color: #102a43;
+	color: #829ab1;
+	font-size: 0.9rem;
+	margin-top: 2rem;
+}
+
+@media (max-width: 600px) {
+	.quiz-grid-binom {
+					grid-template-columns: 1fr;
+	}
+}
