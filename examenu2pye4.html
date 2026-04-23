@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen: Probabilidad y Estadística II</title>
+    <style>
+        /* ================= ESTILOS INTERACTIVOS (KAHOOT STYLE) ================= */
+        :root {
+            --kahoot-purple: #46178f;
+            --red: #e21b3c;
+            --blue: #1368ce;
+            --yellow: #d89e00;
+            --green: #26890c;
+            --bg: #f2f2f2;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: var(--bg); }
+        
+        #app { max-width: 900px; margin: 0 auto; padding: 20px; display: flex; flex-direction: column; min-height: 100vh; box-sizing: border-box; }
+        .screen { display: none; flex-direction: column; align-items: center; justify-content: center; flex: 1; }
+        .screen.active { display: flex; }
+
+        /* Login & UI */
+        .login-box { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 500px; }
+        input { width: 100%; padding: 15px; margin: 15px 0; border: 2px solid #ccc; border-radius: 5px; font-size: 16px; box-sizing: border-box; }
+        .btn-main { background: var(--kahoot-purple); color: white; border: none; padding: 15px 20px; font-size: 18px; font-weight: bold; border-radius: 5px; cursor: pointer; width: 100%; margin-bottom: 10px; transition: 0.2s; }
+        .btn-secondary { background: var(--blue); color: white; border: none; padding: 15px 20px; font-size: 16px; font-weight: bold; border-radius: 5px; cursor: pointer; width: 100%; }
+
+        .header { display: flex; justify-content: space-between; width: 100%; padding: 15px 20px; background: white; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; font-weight: bold; font-size: 18px; box-sizing: border-box; }
+
+        .question-box { background: white; padding: 30px; border-radius: 10px; text-align: center; font-size: 22px; font-weight: bold; margin-bottom: 20px; width: 100%; box-shadow: 0 4px 10px rgba(0,0,0,0.1); box-sizing: border-box; }
+
+        /* Grid de Respuestas */
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; }
+        @media (max-width: 600px) { .options-grid { grid-template-columns: 1fr; } }
+        
+        .option-btn { color: white; border: none; padding: 20px 15px; font-size: 17px; font-weight: bold; border-radius: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 0px rgba(0,0,0,0.2); transition: transform 0.1s; text-align: center; word-break: break-word; }
+        .option-btn:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 0px 0px rgba(0,0,0,0.2); }
+        .option-btn:disabled { cursor: not-allowed; filter: brightness(0.8); }
+        
+        .opt-0 { background-color: var(--red); }
+        .opt-1 { background-color: var(--blue); }
+        .opt-2 { background-color: var(--yellow); }
+        .opt-3 { background-color: var(--green); }
+
+        /* Alerta Anti-Trampas */
+        #cheat-warning { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(226, 27, 60, 0.95); color: white; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; text-align: center; padding: 20px; box-sizing: border-box; }
+        #cheat-warning h1 { font-size: 40px; margin-bottom: 10px; }
+
+        /* ================= ESTILOS DE IMPRESIÓN (1 HOJA, MIN 12PT) ================= */
+        #print-area { display: none; }
+        
+        @media print {
+            @page { size: letter; margin: 10mm; } 
+            body { background: white; color: black; font-size: 12pt !important; margin: 0; font-family: Arial, sans-serif; }
+            
+            #app, #cheat-warning { display: none !important; }
+            #print-area { display: block !important; padding: 0; margin: 0; }
+            
+            .print-header { border-bottom: 2px solid black; padding-bottom: 5px; margin-bottom: 10px; text-align: center; }
+            .print-header h1 { margin: 0 0 5px 0; font-size: 16pt; font-weight: bold; }
+            .print-info { display: flex; justify-content: space-between; font-size: 12pt !important; font-weight: bold; margin-bottom: 5px;}
+            
+            /* Grid a 2 columnas para que 10 preguntas con letra 12pt quepan en 1 hoja */
+            .print-questions-grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 20px; row-gap: 8px; }
+            
+            .print-q { border: 1px solid #ccc; padding: 6px; border-radius: 4px; break-inside: avoid; }
+            .print-q-text { font-weight: bold; margin-bottom: 4px; font-size: 12pt !important; line-height: 1.1; }
+            
+            /* Visualización en blanco vs calificado */
+            body.print-blank .ans-graded { display: none; }
+            body.print-blank .ans-blank { display: block; font-size: 12pt !important; margin-left: 10px; line-height: 1.2; }
+            
+            body.print-graded .ans-blank { display: none; }
+            body.print-graded .ans-graded { display: block; margin-top: 4px; font-size: 12pt !important; line-height: 1.2;}
+            .ans-graded.correct { color: green; font-weight: bold; }
+            .ans-graded.wrong { color: red; text-decoration: line-through; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="cheat-warning">
+        <h1>⚠️ ALERTA DE BLOQUEO ⚠️</h1>
+        <p>Has salido de la pantalla del examen.</p>
+        <p>Si no regresas en 5 segundos, tu evaluación será anulada.</p>
+    </div>
+
+    <div id="app">
+        <div id="screen-login" class="screen active">
+            <div class="login-box">
+                <h2 style="color: var(--kahoot-purple); margin-top:0;">Examen: Probabilidad y Estadística</h2>
+                <p>10 Preguntas. <b style="color:red;">Atención:</b> Salir de la ventana anulará el examen tras 5 segundos.</p>
+                <input type="text" id="student-name" placeholder="Escribe tu Nombre Completo" autocomplete="off">
+                <button class="btn-main" onclick="startExam()">COMENZAR EXAMEN</button>
+                <button class="btn-secondary" onclick="printBlank()">🖨️ Imprimir Examen en Blanco (Inicio)</button>
+            </div>
+        </div>
+
+        <div id="screen-quiz" class="screen">
+            <div class="header">
+                <span id="display-name">Alumno: </span>
+                <span id="display-progress">Pregunta: 1/10</span>
+            </div>
+            <div class="question-box" id="question-text"></div>
+            <div class="options-grid" id="options-container"></div>
+        </div>
+
+        <div id="screen-results" class="screen">
+            <div class="login-box">
+                <h2>Evaluación Finalizada</h2>
+                <h1 id="final-score" style="color: var(--blue); font-size: 48px; margin: 10px 0;">0 / 10</h1>
+                <p id="time-summary"></p>
+                <button class="btn-main" style="background: var(--green);" onclick="printGraded()">🖨️ Generar PDF Calificado (Final)</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="print-area"></div>
+
+    <script>
+        /* ================= BASE DE DATOS ESTRATÉGICA ================= 
+           Nota: Los distractores tienen una longitud de caracteres 
+           casi idéntica a la respuesta correcta.
+        */
+        const fullDatabase = [
+            { 
+                q: "¿Qué es una distribucion normal?", 
+                r: "Es una funcion matematica continua que describe como se distribuyen los valores de una variable aleatoria.", 
+                d: [
+                   "Es una expresion algebraica discreta que calcula como se agrupan los valores en una constante numerica.", 
+                   "Es una formula estadistica condicional que determina como se eliminan los valores en una muestra aleatoria.", 
+                   "Es una ecuacion diferencial ordinaria que grafica como se expanden los valores de una constante geometrica."
+                ] 
+            },
+            { 
+                q: "¿Que es una variable aleatoria continua?", 
+                r: "Es la que puede tomar cualquier valor dentro de un intervalo continuo", 
+                d: [
+                   "Es la que solo admite valores enteros dentro de un conjunto limitado", 
+                   "Es la que permite medir frecuencias dentro de un experimento cerrado", 
+                   "Es la que excluye datos fraccionarios dentro de un analisis variable"
+                ] 
+            },
+            { 
+                q: "¿Que es una variable aleatoria?", 
+                r: "Una variable aleatoria es, básicamente, una función que asigna un valor numérico a cada resultado posible de un experimento aleatorio.", 
+                d: [
+                   "Una constante matematica es, generalmente, una ecuacion que define un valor invariable a cada elemento presente en un calculo especifico.", 
+                   "Una distribucion binomial es, teoricamente, una grafica que muestra un valor porcentual a cada variable obtenida en un estudio deductivo.", 
+                   "Una probabilidad empirica es, estrictamente, una formula que otorga un valor fraccionario a cada intervalo de un procedimiento matematico."
+                ] 
+            },
+            { 
+                q: "¿Qué se registra al estudiar una variable en un fenómeno aleatorio?", 
+                r: "Se registran los resultados de las mediciones de forma ordenada.", 
+                d: [
+                   "Se calculan los promedios de las frecuencias de manera aleatoria.", 
+                   "Se grafican los porcentajes de las constantes de forma invertida.", 
+                   "Se dividen los intervalos de las distribuciones de manera exacta."
+                ] 
+            },
+            { 
+                q: "¿Qué se coloca en la segunda columna de la tabla de frecuencias?", 
+                r: "El número de veces que ocurre cada valor (frecuencia)", 
+                d: [
+                   "El total de casos que agrupa cada evento (porcentaje)", 
+                   "La suma de datos que anula cada funcion (probabilidad)", 
+                   "El calculo de fallos que genera cada prueba (varianza)"
+                ] 
+            },
+            { 
+                q: "¿Para que se utiliza el Teorema de Bayes en contextos reales?", 
+                r: "Detección de spam y diagnósticos médicos", 
+                d: [
+                   "Medición de peso y cálculos geométricos", 
+                   "Creación de software y diseño logaritmico", 
+                   "Suma de vectores y ecuaciones algebraicas"
+                ] 
+            },
+            { 
+                q: "¿Que es lo que calcula el teorema de bayes?", 
+                r: "la probabilidad condicional de un evento una hipótesis o causa", 
+                d: [
+                   "la frecuencia absoluta de una muestra una variable o constante", 
+                   "la desviacion estandar de un modelo una ecuacion o resultado", 
+                   "la distribucion binomial de un numero una fraccion o funcion"
+                ] 
+            },
+            { 
+                q: "¿Qué condición debe cumplir una distribución de probabilidad discreta?", 
+                r: "La suma de todas las probabilidades debe ser igual a 1.", 
+                d: [
+                   "La resta de todas las frecuencias debe ser mayor que 0.", 
+                   "El total de todos los porcentajes debe ser igual a 0.", 
+                   "El valor de todas las variables debe ser menor que 1."
+                ] 
+            },
+            { 
+                q: "En la fórmula P(A|B) el evento 'B' representa:", 
+                r: "La nueva evidencia (lo que ya ocurrio)", 
+                d: [
+                   "La antigua variable (lo que no pasara)", 
+                   "La primera constante (lo que se medira)", 
+                   "El ultimo resultado (lo que se ignoro)"
+                ] 
+            },
+            { 
+                q: "¿Qué significa 'éxito' en la distribución binomial?", 
+                r: "Es el resultado que estamos buscando, no necesariamente algo bueno", 
+                d: [
+                   "Es la constante que estamos midiendo, no obligatoriamente un error", 
+                   "Es la variable que estamos sumando, no matematicamente un fracaso", 
+                   "Es el promedio que estamos graficando, no especificamente un dato"
+                ] 
+            },
+            { 
+                q: "¿Qué tipos de variables aleatorias existen?", 
+                r: "Discretas y continuas", 
+                d: [
+                   "Positivas y negativas", 
+                   "Absolutas y relativas", 
+                   "Numericas y textuales"
+                ] 
+            },
+            { 
+                q: "¿Las variables continuas admiten numeros...?", 
+                r: "Decimales o fraccionarios", 
+                d: [
+                   "Positivos o logaritmicos", 
+                   "Absolutos o exponenciales", 
+                   "Complejos o imaginarios"
+                ] 
+            },
+            { 
+                q: "¿Como se define el espacio muestral?", 
+                r: "El conjunto de todos los resultados posibles", 
+                d: [
+                   "La fraccion de todas las variables medidas", 
+                   "El recuento de algunos eventos individuales", 
+                   "La suma total de varias frecuencias exactas"
+                ] 
+            },
+            { 
+                q: "¿Cuando se usa la distribución binomial?", 
+                r: "Se usa para modelar el número de éxitos en un número fijo de ensayos independientes", 
+                d: [
+                   "Se usa para medir la cantidad de errores en un espacio grande de variables continuas", 
+                   "Se usa para graficar el total de fracasos en un tiempo corto de eventos dependientes", 
+                   "Se usa para calcular el valor de promedios en un entorno real de numeros irracionales"
+                ] 
+            },
+            { 
+                q: "¿Que significa (VAD)?", 
+                r: "Variable Aleatoria Discreta", 
+                d: [
+                   "Varianza Absoluta Dividida", 
+                   "Variable Analitica Directa", 
+                   "Valor Aleatorio Descripto"
+                ] 
+            },
+            { 
+                q: "¿Que significa (VAC)?", 
+                r: "Variable Aleatoria Continua", 
+                d: [
+                   "Varianza Analitica Compleja", 
+                   "Valor Absoluto Condicional", 
+                   "Vector Aleatorio Calculado"
+                ] 
+            },
+            { 
+                q: "¿El denominador de la formula de bayes representa?", 
+                r: "la probabilidad total o marginal de la evidencia", 
+                d: [
+                   "la desviacion estandar o central de la constante", 
+                   "la frecuencia absoluta o relativa de la variable", 
+                   "la distribucion normal o binomial de la ecuacion"
+                ] 
+            },
+            { 
+                q: "¿Cuál es la formula general del Teorema de Bayes?", 
+                r: "P(A|B) = [P(B|A) × P(A)] / P(B)", 
+                d: [
+                   "P(A∪B) = [P(B∩A) + P(A)] / P(A)", 
+                   "P(A∩B) = [P(B|A) - P(B)] * P(A)", 
+                   "P(B|A) = [P(A|B) × P(B)] / P(A)"
+                ] 
+            },
+            {
+                q: "¿Cuál es la fórmula general de la Distribución Normal?",
+                r: "f(x) = (1 / (σ√2π)) × e^[-(x - μ)² / 2σ²]",
+                d: [
+                   "g(y) = (1 / (μ√2π)) + e^[-(y - σ)² / 2μ²]",
+                   "h(z) = (2 / (σ√3π)) - e^[-(z + μ)² / 3σ²]",
+                   "p(k) = (1 / (π√2σ)) × e^[-(k - μ)³ / 2π²]"
+                ]
+            },
+            {
+                q: "Que es una variable aleatoria discreta (vad)?",
+                r: "Toma de valores enteros o saltos",
+                d: [
+                   "Mide las variables continuas hoy",
+                   "Suma los decimales fraccionarios",
+                   "Usa los resultados probabilistas"
+                ]
+            }
+        ];
+
+        // ================= LÓGICA DEL SISTEMA =================
+        let activeQuestions = [];
+        let studentName = "";
+        let currentQ = 0;
+        let score = 0;
+        let startTime, endTime;
+        let userAnswers = [];
+        let examActive = false;
+        
+        // Antitrampas
+        let lastHiddenTime = 0;
+        let isCheater = false;
+        let cheatTimer;
+
+        // Detector de Cambio de Ventana
+        document.addEventListener("visibilitychange", () => {
+            if (!examActive || isCheater) return;
+            const warningEl = document.getElementById('cheat-warning');
+
+            if (document.hidden) {
+                warningEl.style.display = 'flex';
+                // 5 segundos de gracia
+                cheatTimer = setTimeout(() => {
+                    lockExam();
+                }, 5000);
+            } else {
+                clearTimeout(cheatTimer);
+                if (!isCheater) {
+                    warningEl.style.display = 'none';
+                }
+            }
+        });
+
+        function lockExam() {
+            isCheater = true;
+            examActive = false;
+            document.getElementById('cheat-warning').innerHTML = `
+                <h1>❌ EXAMEN ANULADO ❌</h1>
+                <p>Saliste de la ventana por más de 5 segundos.</p>
+                <button class="btn-main" style="margin-top:20px; width:250px;" onclick="finishExam(true)">Ver Reporte Final</button>
+            `;
+        }
+
+        function startExam() {
+            studentName = document.getElementById("student-name").value.trim().toUpperCase();
+            if (studentName === "") { alert("Ingresa tu nombre completo."); return; }
+
+            const localKey = "exam_" + studentName.replace(/\s/g, '');
+            if (localStorage.getItem(localKey)) {
+                alert("Ya presentaste este examen. No hay reintentos.");
+                return;
+            }
+
+            localStorage.setItem(localKey, "started");
+            activeQuestions = fullDatabase.sort(() => 0.5 - Math.random()).slice(0, 10);
+            
+            examActive = true;
+            startTime = new Date();
+            
+            document.getElementById("display-name").innerText = "Alumno: " + studentName;
+            document.getElementById("screen-login").classList.remove("active");
+            document.getElementById("screen-quiz").classList.add("active");
+
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = activeQuestions[currentQ];
+            document.getElementById("display-progress").innerText = `Pregunta: ${currentQ + 1} / 10`;
+            document.getElementById("question-text").innerText = q.q;
+
+            let options = [...q.d, q.r].sort(() => 0.5 - Math.random());
+            const container = document.getElementById("options-container");
+            container.innerHTML = "";
+
+            options.forEach((opt, index) => {
+                const btn = document.createElement("button");
+                btn.className = `option-btn opt-${index}`;
+                btn.innerText = opt;
+                btn.onclick = () => selectAnswer(opt, btn, q.r);
+                container.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(selectedText, btnElement, correctText) {
+            const allBtns = document.querySelectorAll('.option-btn');
+            allBtns.forEach(b => b.disabled = true); // Bloquear opciones
+
+            userAnswers.push(selectedText);
+
+            if (selectedText === correctText) {
+                score++;
+                btnElement.style.filter = "brightness(1.5) drop-shadow(0 0 10px white)";
+            } else {
+                btnElement.style.filter = "brightness(0.5)";
+                allBtns.forEach(b => {
+                    if (b.innerText === correctText) {
+                         b.style.filter = "brightness(1.5) drop-shadow(0 0 10px white)";
+                    }
+                });
+            }
+
+            setTimeout(() => {
+                currentQ++;
+                if (currentQ < activeQuestions.length && !isCheater) {
+                    loadQuestion();
+                } else {
+                    finishExam(false);
+                }
+            }, 1500);
+        }
+
+        function formatTime(date) { 
+            if(!date) return "--:--";
+            return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'}); 
+        }
+
+        function finishExam(dueToCheat) {
+            examActive = false;
+            endTime = new Date();
+            
+            const localKey = "exam_" + studentName.replace(/\s/g, '');
+            localStorage.setItem(localKey, `score:${score}_cheat:${dueToCheat}`);
+
+            document.getElementById("cheat-warning").style.display = "none";
+            document.getElementById("screen-quiz").classList.remove("active");
+            document.getElementById("screen-results").classList.add("active");
+
+            document.getElementById("final-score").innerText = dueToCheat ? "ANULADO" : `${score} / 10`;
+            document.getElementById("time-summary").innerHTML = `
+                <strong>Inicio:</strong> ${formatTime(startTime)} <br>
+                <strong>Término:</strong> ${formatTime(endTime)}
+            `;
+        }
+
+        // ================= IMPRESIÓN (BLANCO Y CALIFICADO A 12PT - 1 HOJA) =================
+        function printBlank() {
+            let tempName = document.getElementById("student-name").value.trim().toUpperCase() || "_________________________________";
+            activeQuestions = fullDatabase.sort(() => 0.5 - Math.random()).slice(0, 10);
+            
+            document.body.className = 'print-blank'; 
+            buildPrintHTML(tempName, false, true);
+            window.print();
+        }
+
+        function printGraded() {
+            document.body.className = 'print-graded'; 
+            buildPrintHTML(studentName, isCheater, false);
+            window.print();
+        }
+
+        function buildPrintHTML(name, dueToCheat, isBlank) {
+            const printArea = document.getElementById("print-area");
+            
+            let html = `
+                <div class="print-header">
+                    <h1>Examen: Probabilidad y Estadística II</h1>
+                    <div class="print-info">
+                        <span>Alumno: ${name}</span>
+                        <span>Aciertos: ${isBlank ? '___ / 10' : (dueToCheat ? '0 (TRAMPA)' : score + ' / 10')}</span>
+                    </div>
+                    <div class="print-info" style="font-weight:normal;">
+                        <span>Inicio: ${isBlank ? '__:__' : formatTime(startTime)}</span>
+                        <span>Término: ${isBlank ? '__:__' : formatTime(endTime)}</span>
+                    </div>
+                </div>
+                <div class="print-questions-grid">
+            `;
+
+            activeQuestions.forEach((q, index) => {
+                html += `<div class="print-q">`;
+                html += `<div class="print-q-text">${index + 1}. ${q.q}</div>`;
+                
+                if (isBlank) {
+                    let opts = [...q.d, q.r].sort(() => 0.5 - Math.random());
+                    opts.forEach(o => {
+                        html += `<div class="ans-blank">( ) ${o}</div>`;
+                    });
+                } else {
+                    const uAns = userAnswers[index] || "Sin responder";
+                    if (uAns === q.r) {
+                        html += `<div class="ans-graded correct">[ ✔ ] ${q.r}</div>`;
+                    } else {
+                        html += `<div class="ans-graded wrong">[ ✘ ] ${uAns}</div>`;
+                        html += `<div class="ans-graded correct">Correcta: ${q.r}</div>`;
+                    }
+                }
+                
+                html += `</div>`;
+            });
+
+            html += `</div>`;
+            printArea.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
