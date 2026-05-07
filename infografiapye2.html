@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		/* =========================================================
+   INFOGRAFÍA SESIÓN 21: DISTRIBUCIÓN NORMAL
+========================================================= */
+.infographic-container {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    max-width: 850px;
+    margin: 40px auto;
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    overflow: hidden;
+    color: #2d3436;
+}
+
+.info-header {
+    background: linear-gradient(135deg, #0984e3 0%, #6c5ce7 100%);
+    color: white;
+    padding: 40px 20px;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+}
+
+.info-header .badge {
+    display: inline-block;
+    background: #fdcb6e;
+    color: #2d3436;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.85em;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+.info-header h1 {
+    margin: 0 0 10px 0;
+    font-size: 2.2em;
+}
+
+.info-body {
+    padding: 30px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+.info-card {
+    background: #f5f6fa;
+    padding: 25px;
+    border-radius: 12px;
+    border-left: 5px solid #0984e3;
+    transition: transform 0.3s ease;
+}
+
+.info-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.info-card h2 {
+    color: #0984e3;
+    margin-top: 0;
+    border-bottom: 2px solid #dfe6e9;
+    padding-bottom: 10px;
+}
+
+.properties-card {
+    grid-column: span 2;
+    border-left-color: #00b894;
+}
+
+.properties-card h2 { color: #00b894; }
+
+.properties-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.properties-list li {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.visual-card {
+    grid-column: span 2;
+    border-left-color: #e84393;
+    text-align: center;
+}
+
+.visual-card h2 { color: #e84393; }
+
+/* Representación CSS de la Campana de Gauss */
+.gauss-illustration {
+    position: relative;
+    width: 300px;
+    height: 150px;
+    margin: 20px auto;
+}
+
+.gauss-illustration .axis {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background: #2d3436;
+}
+
+.gauss-illustration .curve {
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 250px;
+    height: 120px;
+    background: rgba(232, 67, 147, 0.2);
+    border-top: 3px solid #e84393;
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+}
+
+.gauss-illustration .mean-line {
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    height: 120px;
+    border-left: 2px dashed #2d3436;
+    padding-left: 5px;
+    font-weight: bold;
+}
+
+/* Modo Maestro */
+.teacher-tip {
+    background: #ffeaa7;
+    color: #d35400;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+    font-size: 0.9em;
+    font-weight: 600;
+    border-left: 4px solid #e17055;
+    text-align: left;
+    animation: fadeIn 0.5s ease-in;
+}
+
+.teacher-tip.hidden {
+    display: none;
+}
+
+.infographic-container footer {
+    background: #2d3436;
+    color: #dfe6e9;
+    text-align: center;
+    padding: 15px;
+    font-size: 0.8em;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+    .info-body, .properties-list {
+        grid-template-columns: 1fr;
+    }
+}
+	</style>
+</head>
+<body>
+	<!-- INFOGRAFÍA: SESIÓN 21 - DISTRIBUCIÓN NORMAL -->
+<div class="infographic-container" id="sesion21-normal">
+    
+	<header class="info-header" ondblclick="unlockTeacherTips()">
+					<div class="badge">Sesión 21 | Bloque II</div>
+					<h1>Introducción a la Distribución Normal</h1>
+					<p>El modelo matemático perfecto de la naturaleza</p>
+					<div class="teacher-tip hidden">💡 TIP MAESTRO (1983): INICIO. Comience la clase pidiendo a los alumnos que observen las estaturas de sus compañeros. Explique que la mayoría tiene una estatura "promedio" y muy pocos son extremadamente altos o bajos. Esta es "La Campana de Gauss en la naturaleza" [1, 2].</div>
+	</header>
+
+	<div class="info-body">
+					<!-- Sección 1: ¿Qué es? -->
+					<section class="info-card">
+									<div class="icon">🔔</div>
+									<h2>La Campana de Gauss</h2>
+									<p>Es una distribución teórica para variables aleatorias continuas que tiene forma de campana y es perfectamente simétrica [3]. Nos ayuda a predecir el comportamiento de fenómenos naturales, industriales y sociales [2].</p>
+					</section>
+
+					<!-- Sección 2: Propiedades -->
+					<section class="info-card properties-card">
+									<h2>Propiedades de la Curva Normal</h2>
+									<ul class="properties-list">
+													<li><b>Simetría:</b> La mitad izquierda es el reflejo exacto de la mitad derecha [1, 3].</li>
+													<li><b>Centro:</b> El punto más alto de la curva representa la Media (μ) [4, 5].</li>
+													<li><b>Área Total:</b> El área completa bajo la curva representa el 100% de la probabilidad (Área = 1) [1].</li>
+													<li><b>Dispersión:</b> El ancho de la campana depende de la Desviación Estándar (σ) [4, 5].</li>
+									</ul>
+									<div class="teacher-tip hidden">💡 TIP MAESTRO: DESARROLLO. Dibuje en el pizarrón una curva ancha y una estrecha. Pregunte: "¿En cuál hay menos variación de datos?". Aproveche para afianzar que a menor desviación estándar, más estrecha y alta es la campana [4, 5].</div>
+					</section>
+
+					<!-- Sección 3: Visualización -->
+					<section class="info-card visual-card">
+									<h2>Visualización Matemática</h2>
+									<div class="gauss-illustration">
+													<div class="curve"></div>
+													<div class="axis"></div>
+													<div class="mean-line">μ</div>
+									</div>
+									<div class="teacher-tip hidden">💡 TIP MAESTRO: CIERRE. Utilice GeoGebra en el proyector o pida a los alumnos que lo abran en sus dispositivos. Modifique los valores de μ y σ en vivo para que observen cómo se desplaza (μ) y se aplana o alza (σ) la curva [1].</div>
+					</section>
+	</div>
+
+	<!-- Pie de página -->
+	<footer>copyright &copy; JMGV-PTEL-2026. planeación probabilidad y estadistica 6 sem. Todos los derechos reservados</footer>
+</div>
+</body>
+<script>
+	/* =========================================================
+   SCRIPT: INFOGRAFÍA SESIÓN 21
+========================================================= */
+
+function unlockTeacherTips() {
+    // Solicita la contraseña andragógica para mostrar los tips de planeación
+    const pwd = prompt("🔐 MODO MAESTRO\nIngrese el código de acceso para visualizar las instrucciones de la Secuencia Didáctica de la Sesión 21:");
+    
+    if (pwd === "1983") {
+        // Selecciona todos los tips dentro de esta infografía específica
+        const tips = document.querySelectorAll('#sesion21-normal .teacher-tip');
+        
+        let actived = false;
+        tips.forEach(tip => {
+            if (tip.classList.contains('hidden')) {
+                tip.classList.remove('hidden');
+                actived = true;
+            }
+        });
+        
+        if (actived) {
+            alert("✅ ¡Modo Maestro Activado!\nSe han revelado los recursos didácticos (Inicio, Desarrollo y Cierre con GeoGebra).");
+        } else {
+            alert("ℹ️ El Modo Maestro ya se encuentra activado para esta sesión.");
+        }
+    } else if (pwd !== null) {
+        alert("❌ Código incorrecto. Acceso denegado.");
+    }
+}
+</script>
+</html>

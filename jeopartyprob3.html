@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JeoParty Estadístico | Masterclass</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
+        };
+    </script>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --board-bg: #1a233a;
+            --cell-bg: #274bc9;
+            --cell-hover: #3d63ea;
+            --text-color: #ffffff;
+            --gold: #f1c40f;
+            --correct: #2ecc71;
+            --incorrect: #e74c3c;
+            --modal-bg: rgba(11, 15, 25, 0.95);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            padding: 1.5rem;
+            background: linear-gradient(90deg, #1a233a, #274bc9);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        h1 { color: var(--gold); margin-bottom: 0.5rem; font-size: 2rem; text-transform: uppercase; letter-spacing: 2px;}
+
+        /* Configuración de jugadores */
+        #setup-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            padding: 2rem;
+        }
+
+        .setup-box {
+            background-color: var(--board-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .setup-box select, .setup-box button {
+            font-size: 1.2rem;
+            padding: 0.8rem 1.5rem;
+            margin: 1rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .setup-box button {
+            background-color: var(--gold);
+            color: #000;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        .setup-box button:hover { transform: scale(1.05); }
+
+        /* Interfaz Principal */
+        #game-screen { display: none; flex-direction: column; flex-grow: 1; padding: 1rem; }
+
+        .scoreboard {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            background-color: var(--board-bg);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .player-score {
+            text-align: center;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .player-score.active {
+            border-color: var(--gold);
+            background-color: rgba(241, 196, 15, 0.2);
+            transform: scale(1.1);
+        }
+
+        .player-name { font-weight: bold; font-size: 1.1rem; }
+        .player-points { font-size: 1.5rem; color: var(--gold); font-weight: bold; }
+
+        /* Tablero */
+        .board-container {
+            flex-grow: 1;
+            overflow-x: auto; /* Para móviles */
+        }
+
+        .jeopardy-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            min-width: 600px;
+        }
+
+        .category-header {
+            background-color: #111827;
+            color: var(--gold);
+            text-align: center;
+            padding: 1rem;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+
+        .cell {
+            background-color: var(--cell-bg);
+            color: var(--gold);
+            text-align: center;
+            padding: 1.5rem 1rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cell:hover:not(.disabled) {
+            background-color: var(--cell-hover);
+            transform: translateY(-2px);
+        }
+
+        .cell.disabled {
+            background-color: #1f2937;
+            color: #4b5563;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* Modal de Preguntas */
+        #question-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--modal-bg);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            z-index: 1000;
+        }
+
+        .question-container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .turn-indicator {
+            color: var(--gold);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: bold;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .question-text {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            background-color: var(--cell-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 600px) {
+            .options-grid { grid-template-columns: 1fr; }
+            .question-text { font-size: 1.3rem; padding: 1.5rem; }
+        }
+
+        .option-btn {
+            background-color: var(--board-bg);
+            color: white;
+            border: 2px solid var(--cell-bg);
+            padding: 1.2rem;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover:not(:disabled) { background-color: var(--cell-bg); }
+        
+        .option-btn.correct { background-color: var(--correct) !important; border-color: var(--correct) !important; }
+        .option-btn.incorrect { background-color: var(--incorrect) !important; border-color: var(--incorrect) !important; opacity: 0.5; }
+        .option-btn:disabled { cursor: not-allowed; }
+
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: #05080f;
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-top: auto;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>JeoParty Estadístico</h1>
+        <p>Masterclass: Tipos de Distribuciones</p>
+    </header>
+
+    <div id="setup-screen">
+        <div class="setup-box">
+            <h2>Configuración del Juego</h2>
+            <br>
+            <label for="num-players">Selecciona el número de jugadores:</label><br>
+            <select id="num-players">
+                <option value="2">2 Jugadores</option>
+                <option value="3">3 Jugadores</option>
+                <option value="4">4 Jugadores</option>
+                <option value="5">5 Jugadores</option>
+            </select>
+            <br>
+            <button onclick="startGame()">Iniciar Masterclass</button>
+        </div>
+    </div>
+
+    <div id="game-screen">
+        <div class="scoreboard" id="scoreboard">
+            </div>
+
+        <div class="board-container">
+            <div class="jeopardy-board" id="board">
+                </div>
+        </div>
+    </div>
+
+    <div id="question-modal">
+        <div class="question-container">
+            <div class="turn-indicator" id="turn-indicator">Turno del Jugador 1</div>
+            <div class="question-text" id="question-text">Pregunta...</div>
+            <div class="options-grid" id="options-grid">
+                </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; JMGV-PTEL. gamificacion probabilidad y estadistica. Todos los derechos reservados.
+    </footer>
+
+    <script>
+        // --- 1. BASE DE DATOS DE PREGUNTAS (10 por categoría) ---
+        // Se formulan opciones con longitud de caracteres similar para rigor andragógico.
+        const db = [
+            {
+                category: "Binomial",
+                questions: [
+                    { q: "¿Qué tipo de variable analiza principalmente la distribución Binomial en sus estudios?", opts: ["Variables de tipo cualitativo nominal.", "Variables aleatorias continuas reales.", "Variables aleatorias discretas enteras.", "Variables con distribución asimétrica."], a: 2 },
+                    { q: "En la ecuación Binomial, ¿qué representa matemáticamente el parámetro 'n'?", opts: ["La probabilidad de éxito del evento.", "El número total de ensayos idénticos.", "La varianza de la muestra poblacional.", "El coeficiente de asimetría de Pearson."], a: 1 },
+                    { q: "Si la probabilidad de éxito (p) es 0.40, ¿cuál es el valor exacto del fracaso (q)?", opts: ["El valor exacto del fracaso es 0.40.", "El valor exacto del fracaso es 0.60.", "El valor exacto del fracaso es 0.50.", "El valor exacto del fracaso es 1.40."], a: 1 },
+                    { q: "¿Cuál es la fórmula correcta para calcular la Esperanza (Media) en una Binomial?", opts: ["La media se calcula mediante: \\( \\mu = npq \\)", "La media se calcula mediante: \\( \\mu = n/p \\)", "La media se calcula mediante: \\( \\mu = np \\)", "La media se calcula mediante: \\( \\mu = p/n \\)"], a: 2 },
+                    { q: "Un requisito indispensable para que un experimento sea considerado Binomial es:", opts: ["Que los ensayos sean independientes.", "Que la probabilidad cambie siempre.", "Que existan más de tres resultados.", "Que el tamaño de muestra sea infinito."], a: 0 },
+                    { q: "¿Qué nombre recibe un experimento aleatorio que consta de un solo ensayo Binomial?", opts: ["Ensayo de distribución de Gauss.", "Ensayo de distribución de Poisson.", "Ensayo de variable de Bernoulli.", "Ensayo del Teorema del Límite."], a: 2 },
+                    { q: "En la fórmula \\( P(x) = \\binom{n}{x} p^x q^{n-x} \\), el término \\( \\binom{n}{x} \\) representa:", opts: ["La probabilidad acumulada total.", "El coeficiente binomial combinatorio.", "La desviación estándar del modelo.", "El error estándar de la estimación."], a: 1 },
+                    { q: "¿Cuál de los siguientes es un ejemplo clásico de aplicación Binomial en industria?", opts: ["Medir el volumen de agua en un tanque.", "Contar piezas defectuosas en un lote.", "Registrar el peso de cajas de cartón.", "Calcular el tiempo de vida de un foco."], a: 1 },
+                    { q: "La varianza de una distribución Binomial se calcula utilizando la siguiente expresión:", opts: ["Varianza es igual a: \\( \\sigma^2 = np \\)", "Varianza es igual a: \\( \\sigma^2 = npq \\)", "Varianza es igual a: \\( \\sigma^2 = pq/n \\)", "Varianza es igual a: \\( \\sigma^2 = p^2q \\)"], a: 1 },
+                    { q: "Si un experimento se repite 50 veces y la probabilidad de éxito es 0.1, la media es:", opts: ["La esperanza o media es exactamente 0.5", "La esperanza o media es exactamente 5.0", "La esperanza o media es exactamente 50.", "La esperanza o media es exactamente 0.1"], a: 1 }
+                ]
+            },
+            {
+                category: "Normal",
+                questions: [
+                    { q: "¿Cuál es la forma gráfica característica de la Distribución Normal en el plano cartesiano?", opts: ["Forma de línea recta ascendente.", "Forma de parábola cóncava hacia arriba.", "Forma de campana simétrica bilateral.", "Forma de distribución escalonada recta."], a: 2 },
+                    { q: "¿Qué parámetros estadísticos definen completamente a una distribución Normal típica?", opts: ["La mediana poblacional y el rango.", "La media (\\( \\mu \\)) y la varianza (\\( \\sigma^2 \\)).", "El tamaño de muestra y el parámetro p.", "La moda y la desviación media absoluta."], a: 1 },
+                    { q: "En la Distribución Normal Estándar, ¿cuáles son los valores fijos de su media y varianza?", opts: ["Media igual a uno y varianza igual a uno.", "Media igual a cero y varianza igual a cero.", "Media igual a cero y varianza igual a uno.", "Media igual a uno y varianza igual a cero."], a: 2 },
+                    { q: "El área total bajo la curva de cualquier función de densidad de probabilidad Normal es:", opts: ["Aproximadamente igual a 0.9973.", "Siempre igual a la desviación estándar.", "Exactamente igual a 1 (o el 100%).", "Depende completamente de la media."], a: 2 },
+                    { q: "¿Qué porcentaje de los datos se encuentra a \\( \\pm 1\\sigma \\) de la media según la regla empírica?", opts: ["Aproximadamente el 99.7% de los datos.", "Aproximadamente el 95.0% de los datos.", "Aproximadamente el 68.2% de los datos.", "Aproximadamente el 50.0% de los datos."], a: 2 },
+                    { q: "¿Cómo se llama el proceso de convertir una variable Normal 'X' en una variable 'Z'?", opts: ["Proceso de estandarización o tipificación.", "Proceso de interpolación polinómica.", "Proceso de extrapolación exponencial.", "Proceso de normalización logarítmica."], a: 0 },
+                    { q: "La fórmula para calcular el valor Z es: \\( Z = \\frac{X - \\mu}{\\sigma} \\). ¿Qué indica Z?", opts: ["La probabilidad exacta del evento.", "Número de desviaciones desde la media.", "La varianza acumulada de la muestra.", "El margen de error del experimento."], a: 1 },
+                    { q: "¿Qué característica de asimetría posee una Distribución Normal teóricamente perfecta?", opts: ["Posee un sesgo positivo hacia la derecha.", "Su coeficiente de asimetría es igual a cero.", "Posee un sesgo negativo hacia la izquierda.", "Su asimetría depende del tamaño muestral."], a: 1 },
+                    { q: "La distribución Normal es asintótica respecto al eje X. ¿Qué significa este concepto?", opts: ["Que cruza el eje X en dos puntos exactos.", "Que la curva tiene un límite superior fijo.", "Que se acerca al eje X pero nunca lo toca.", "Que se vuelve paralela al eje Y rápido."], a: 2 },
+                    { q: "¿Cuál es una aplicación típica de la distribución Normal en las ciencias naturales?", opts: ["Contar el número de accidentes por mes.", "Modelar la estatura de una población.", "Analizar variables discretas dicotómicas.", "Predecir el tiempo de falla de una pieza."], a: 1 }
+                ]
+            },
+            {
+                category: "Poisson",
+                questions: [
+                    { q: "¿Qué tipo de eventos modela de forma principal la distribución estadística de Poisson?", opts: ["Eventos raros en un intervalo de tiempo.", "Eventos mutuamente excluyentes finitos.", "Eventos continuos sin límite de tiempo.", "Eventos dicotómicos con probabilidad alta."], a: 0 },
+                    { q: "¿Cuál es el parámetro principal (y único necesario) para la distribución de Poisson?", opts: ["El número total de ensayos (n).", "La tasa promedio de ocurrencia (\\( \\lambda \\)).", "La desviación estándar poblacional (\\( \\sigma \\)).", "La probabilidad combinada de éxito (p)."], a: 1 },
+                    { q: "Una propiedad matemática única de Poisson es la relación entre su media y varianza:", opts: ["La media es siempre mayor a la varianza.", "La varianza es el cuadrado de la media.", "La media y la varianza son exactamente iguales.", "La media es inversamente proporcional."], a: 2 },
+                    { q: "En la ecuación \\( P(x) = \\frac{e^{-\\lambda} \\lambda^x}{x!} \\), ¿qué representa la letra 'e'?", opts: ["El error estándar del modelo de muestreo.", "El exponente de la variable dependiente.", "La base de los logaritmos neperianos.", "El evento aleatorio que se está midiendo."], a: 2 },
+                    { q: "Si en un banco llegan en promedio 3 clientes por minuto, el valor de \\( \\lambda \\) es:", opts: ["El valor de lambda es exactamente 0.3", "El valor de lambda es exactamente 3.0", "El valor de lambda es exactamente 1.5", "El valor de lambda es exactamente 6.0"], a: 1 },
+                    { q: "Bajo ciertas condiciones, Poisson puede usarse como aproximación de qué distribución:", opts: ["Aproximación de la distribución Normal.", "Aproximación de la distribución Binomial.", "Aproximación de la distribución Uniforme.", "Aproximación de la distribución de Fisher."], a: 1 },
+                    { q: "¿Qué condición temporal o espacial es típica en problemas que involucran a Poisson?", opts: ["Las mediciones se hacen en porcentajes.", "Las ocurrencias se dan en un área o lapso.", "Los eventos dependen del ensayo anterior.", "El espacio muestral es siempre continuo."], a: 1 },
+                    { q: "¿Cuál es un ejemplo de aplicación práctica ideal para la distribución de Poisson?", opts: ["Número de llamadas a un conmutador por hora.", "Temperatura exacta registrada durante el día.", "Porcentaje de personas a favor de una ley.", "Peso exacto de los granos de café en un saco."], a: 0 },
+                    { q: "Si la varianza de una distribución de Poisson es 4, ¿cuál es su desviación estándar?", opts: ["La desviación estándar es exactamente 16.", "La desviación estándar es exactamente 4.0", "La desviación estándar es exactamente 2.0", "La desviación estándar es exactamente 0.5"], a: 2 },
+                    { q: "En la fórmula de Poisson, el término \\( x! \\) en el denominador corresponde matemáticamente a:", opts: ["El diferencial de la variable X medida.", "La función exponencial de base aleatoria.", "El factorial del número exacto de éxitos.", "La sumatoria de todas las probabilidades."], a: 2 }
+                ]
+            },
+            {
+                category: "Uniforme",
+                questions: [
+                    { q: "La característica principal de una distribución Uniforme (Continua o Discreta) es que:", opts: ["Todos los valores tienen diferente probabilidad.", "Los valores centrales son los más probables.", "Todos los valores tienen la misma probabilidad.", "Solo los valores extremos son muy probables."], a: 2 },
+                    { q: "En una distribución Uniforme Continua definida en el intervalo [a, b], la altura de la curva es:", opts: ["Exactamente igual a: \\( 1 / (b - a) \\)", "Exactamente igual a: \\( 1 / (a + b) \\)", "Exactamente igual a: \\( (b - a) / 2 \\)", "Exactamente igual a: \\( (a + b) / 2 \\)"], a: 0 },
+                    { q: "La forma geométrica que describe gráficamente a la distribución Uniforme Continua es:", opts: ["Una forma gráfica de campana asintótica.", "Una forma gráfica de triángulo isósceles.", "Una forma gráfica de rectángulo perfecto.", "Una forma gráfica de línea curva oblicua."], a: 2 },
+                    { q: "Para una Uniforme Continua en [a, b], la fórmula de la esperanza (Media) poblacional es:", opts: ["La esperanza o media es: \\( (a + b) / 2 \\)", "La esperanza o media es: \\( (b - a) / 2 \\)", "La esperanza o media es: \\( a \\cdot b \\)", "La esperanza o media es: \\( \\sqrt{a \\cdot b} \\)"], a: 0 },
+                    { q: "Lanzar un dado honesto de 6 caras es un ejemplo perfecto de una distribución estadística:", opts: ["Distribución Uniforme de tipo Continua.", "Distribución Uniforme de tipo Discreta.", "Distribución Binomial de tipo Asimétrica.", "Distribución Normal Estándar Tipificada."], a: 1 },
+                    { q: "¿Cuál es la fórmula para calcular la Varianza en una distribución Uniforme Continua?", opts: ["Varianza es igual a: \\( (b - a)^2 / 12 \\)", "Varianza es igual a: \\( (b + a)^2 / 12 \\)", "Varianza es igual a: \\( (b - a) / 12 \\)", "Varianza es igual a: \\( (b - a)^2 / 2 \\)"], a: 0 },
+                    { q: "Si una variable se distribuye uniformemente entre 0 y 10, ¿cuál es su probabilidad en X=5? (Continua)", opts: ["La probabilidad puntual en continua es 0.1", "La probabilidad puntual en continua es 0.5", "La probabilidad puntual en continua es cero.", "La probabilidad puntual en continua es 1.0"], a: 2 },
+                    { q: "En la distribución Uniforme Continua, el área total del rectángulo formado siempre suma:", opts: ["Un área total que depende del valor de X.", "Un área total equivalente a cien unidades.", "Un área total estrictamente igual a uno.", "Un área total igual al infinito positivo."], a: 2 },
+                    { q: "Un tren llega a la estación cada 20 minutos de forma constante. ¿Qué modelo aplica al tiempo de espera?", opts: ["Un modelo estadístico de tipo Binomial.", "Un modelo estadístico Uniforme Continuo.", "Un modelo estadístico de Normal Estándar.", "Un modelo de distribución de tipo Poisson."], a: 1 },
+                    { q: "En una distribución Uniforme, la mediana y la media poseen la siguiente característica matemática:", opts: ["La mediana es siempre mayor que la media.", "Ambas medidas estadísticas son idénticas.", "La media es el doble del valor de la mediana.", "No existe correlación entre estas medidas."], a: 1 }
+                ]
+            }
+        ];
+
+        // --- 2. VARIABLES GLOBALES DE ESTADO ---
+        let players = [];
+        let numPlayers = 2;
+        let currentPlayerIndex = 0;
+        let activeCell = null;
+        let activeQuestionData = null;
+        let playersWhoTried = []; // Para la mecánica de robo
+        let pointsValue = 0;
+
+        // --- 3. SINTETIZADOR DE AUDIO (Web Audio API) ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            const now = audioCtx.currentTime;
+            
+            if (type === 'correct') {
+                // Sonido de Acierto: Arpegio ascendente
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now); // Do
+                osc.frequency.setValueAtTime(659.25, now + 0.1); // Mi
+                osc.frequency.setValueAtTime(783.99, now + 0.2); // Sol
+                osc.frequency.setValueAtTime(1046.50, now + 0.3); // Do alto
+                gainNode.gain.setValueAtTime(0, now);
+                gainNode.gain.linearRampToValueAtTime(0.2, now + 0.05);
+                gainNode.gain.linearRampToValueAtTime(0, now + 0.5);
+                osc.start(now);
+                osc.stop(now + 0.5);
+            } else if (type === 'incorrect') {
+                // Sonido de Error: Tono bajo y zumbido
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.exponentialRampToValueAtTime(50, now + 0.4);
+                gainNode.gain.setValueAtTime(0, now);
+                gainNode.gain.linearRampToValueAtTime(0.2, now + 0.05);
+                gainNode.gain.linearRampToValueAtTime(0, now + 0.4);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            }
+        }
+
+        // --- 4. LÓGICA DEL JUEGO ---
+        function startGame() {
+            const select = document.getElementById('num-players');
+            numPlayers = parseInt(select.value);
+            players = [];
+            for(let i=0; i<numPlayers; i++) {
+                players.push({ name: `Jugador ${i+1}`, score: 0 });
+            }
+            currentPlayerIndex = 0;
+            
+            document.getElementById('setup-screen').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'flex';
+            
+            renderScoreboard();
+            renderBoard();
+        }
+
+        function renderScoreboard() {
+            const board = document.getElementById('scoreboard');
+            board.innerHTML = '';
+            players.forEach((p, index) => {
+                const div = document.createElement('div');
+                div.className = `player-score ${index === currentPlayerIndex ? 'active' : ''}`;
+                div.innerHTML = `<div class="player-name">${p.name}</div>
+                                 <div class="player-points">${p.score} pts</div>`;
+                board.appendChild(div);
+            });
+        }
+
+        function nextTurn() {
+            currentPlayerIndex = (currentPlayerIndex + 1) % numPlayers;
+            renderScoreboard();
+        }
+
+        function renderBoard() {
+            const board = document.getElementById('board');
+            board.innerHTML = '';
+            
+            // Cabeceras de categorías
+            db.forEach(cat => {
+                const header = document.createElement('div');
+                header.className = 'category-header';
+                header.innerText = cat.category;
+                board.appendChild(header);
+            });
+
+            // Generar 10 filas de valores (100 a 1000)
+            for(let row = 0; row < 10; row++) {
+                const points = (row + 1) * 100;
+                db.forEach((cat, colIndex) => {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.innerText = points;
+                    cell.onclick = () => openQuestion(cell, cat.questions[row], points);
+                    board.appendChild(cell);
+                });
+            }
+        }
+
+        function openQuestion(cellElement, questionData, points) {
+            if(cellElement.classList.contains('disabled')) return;
+            
+            activeCell = cellElement;
+            activeQuestionData = questionData;
+            pointsValue = points;
+            playersWhoTried = [];
+            
+            updateModalUI();
+            document.getElementById('question-modal').style.display = 'flex';
+            
+            // Re-render MathJax en caso de que la pregunta tenga fórmulas
+            if(window.MathJax) {
+                MathJax.typesetPromise([document.getElementById('question-modal')]);
+            }
+        }
+
+        function updateModalUI() {
+            document.getElementById('turn-indicator').innerText = `Turno de: ${players[currentPlayerIndex].name} (por ${pointsValue} pts)`;
+            document.getElementById('turn-indicator').style.color = playersWhoTried.length > 0 ? varColor('--incorrect') : 'var(--gold)';
+            if(playersWhoTried.length > 0) {
+                 document.getElementById('turn-indicator').innerText += " - ¡ROBO DE PUNTOS!";
+            }
+            
+            document.getElementById('question-text').innerHTML = activeQuestionData.q;
+            
+            const grid = document.getElementById('options-grid');
+            grid.innerHTML = '';
+            
+            activeQuestionData.opts.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerHTML = opt;
+                btn.onclick = () => checkAnswer(index, btn);
+                grid.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIndex, btnElement) {
+            const isCorrect = (selectedIndex === activeQuestionData.a);
+            const allButtons = document.querySelectorAll('.option-btn');
+            allButtons.forEach(b => b.disabled = true); // Prevenir múltiples clicks
+
+            if (isCorrect) {
+                playSound('correct');
+                btnElement.classList.add('correct');
+                players[currentPlayerIndex].score += pointsValue;
+                
+                setTimeout(() => {
+                    closeModal(true);
+                }, 1500);
+            } else {
+                playSound('incorrect');
+                btnElement.classList.add('incorrect');
+                playersWhoTried.push(currentPlayerIndex);
+                
+                if (playersWhoTried.length === numPlayers) {
+                    // Nadie acertó
+                    allButtons[activeQuestionData.a].classList.add('correct');
+                    document.getElementById('turn-indicator').innerText = "Nadie acertó. Respuesta correcta revelada.";
+                    setTimeout(() => {
+                        closeModal(true);
+                        nextTurn(); // Pasa el turno oficial al siguiente
+                    }, 3000);
+                } else {
+                    // Robo de puntos
+                    setTimeout(() => {
+                        nextTurn();
+                        updateModalUI();
+                        // Habilitar los botones no seleccionados
+                        const currentBtns = document.querySelectorAll('.option-btn');
+                        currentBtns.forEach(b => {
+                            if(!b.classList.contains('incorrect')) b.disabled = false;
+                        });
+                    }, 1500);
+                }
+            }
+        }
+
+        function closeModal(disableCell) {
+            document.getElementById('question-modal').style.display = 'none';
+            if(disableCell && activeCell) {
+                activeCell.classList.add('disabled');
+                activeCell.innerText = "";
+            }
+            renderScoreboard();
+        }
+
+        // Utilidad para recuperar colores del root CSS
+        function varColor(name) {
+            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeoparty Estadístico - Probabilidad y Estadística</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        /* =========================================
+           PALETA DE COLORES Y ESTILOS GLOBALES
+        ========================================= */
+        :root {
+            --bg-dark: #00003f; /* Azul profundo clásico */
+            --board-blue: #060ce9;
+            --text-gold: #ffcc00;
+            --text-white: #ffffff;
+            --btn-hover: #0a11ff;
+            --correct-green: #27ae60;
+            --wrong-red: #e74c3c;
+            --panel-bg: rgba(0, 0, 63, 0.95);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-white);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header { text-align: center; padding: 15px; border-bottom: 2px solid var(--text-gold); }
+        header h1 { color: var(--text-gold); text-transform: uppercase; font-size: 2rem; letter-spacing: 2px; }
+
+        main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 20px; overflow: hidden; }
+
+        /* =========================================
+           PANTALLA DE CONFIGURACIÓN
+        ========================================= */
+        #setup-screen {
+            background: var(--board-blue);
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid var(--text-gold);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group label { display: block; margin-bottom: 5px; font-weight: bold; color: var(--text-gold); }
+        .input-group input, .input-group select {
+            width: 100%; padding: 10px; border-radius: 5px; border: none; font-size: 1rem;
+        }
+
+        .btn {
+            background-color: var(--text-gold); color: var(--bg-dark); font-weight: bold;
+            padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;
+            font-size: 1.1rem; text-transform: uppercase; transition: transform 0.2s;
+        }
+        .btn:hover { transform: scale(1.05); }
+
+        #player-names { margin-top: 15px; }
+
+        /* =========================================
+           MARCADOR Y TABLERO
+        ========================================= */
+        #game-screen { display: none; width: 100%; max-width: 1000px; flex-direction: column; gap: 20px; }
+
+        #scoreboard {
+            display: flex; justify-content: space-around; flex-wrap: wrap; gap: 10px;
+            background: #000; padding: 10px; border-radius: 8px; border: 1px solid var(--text-gold);
+        }
+
+        .player-score {
+            text-align: center; padding: 10px 15px; border-radius: 5px; min-width: 100px;
+            background: #222; border: 2px solid transparent; transition: border-color 0.3s;
+        }
+        .player-score.active-turn { border-color: var(--text-gold); background: var(--board-blue); }
+        .player-score h3 { font-size: 1rem; color: #aaa; }
+        .player-score.active-turn h3 { color: var(--text-white); }
+        .player-score p { font-size: 1.5rem; font-weight: bold; color: var(--text-gold); }
+
+        .board-container { width: 100%; overflow-x: auto; padding-bottom: 10px; }
+        
+        #jeopardy-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px; min-width: 600px; /* Asegura scroll en móviles */
+        }
+
+        .category-header {
+            background-color: var(--board-blue); color: var(--text-white);
+            text-align: center; padding: 15px 5px; font-weight: bold; text-transform: uppercase;
+            border: 2px solid #000; font-size: 1rem; display: flex; align-items: center; justify-content: center;
+        }
+
+        .question-card {
+            background-color: var(--board-blue); color: var(--text-gold);
+            text-align: center; padding: 25px 10px; font-size: 2rem; font-weight: bold;
+            border: 2px solid #000; cursor: pointer; transition: background 0.3s;
+            display: flex; align-items: center; justify-content: center; text-shadow: 2px 2px 4px #000;
+        }
+        .question-card:hover:not(.disabled) { background-color: var(--btn-hover); }
+        .question-card.disabled { background-color: #000022; color: #00003f; cursor: default; text-shadow: none; border-color: #000011; }
+
+        /* =========================================
+           MODAL DE PREGUNTAS
+        ========================================= */
+        #question-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--panel-bg); z-index: 1000; flex-direction: column;
+            align-items: center; justify-content: center; padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--board-blue); border: 3px solid var(--text-gold); border-radius: 10px;
+            max-width: 800px; width: 100%; padding: 30px; text-align: center; box-shadow: 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        .modal-points { color: var(--text-gold); font-size: 1.2rem; margin-bottom: 10px; font-weight: bold; }
+        .modal-question { font-size: 1.5rem; margin-bottom: 30px; min-height: 80px; }
+
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+        .option-btn {
+            background-color: #0000aa; color: white; border: 2px solid #aaa; padding: 15px;
+            font-size: 1.1rem; border-radius: 5px; cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center; min-height: 80px;
+        }
+        .option-btn:hover { background-color: var(--btn-hover); border-color: white; }
+        .option-btn.correct { background-color: var(--correct-green) !important; border-color: #fff !important; }
+        .option-btn.wrong { background-color: var(--wrong-red) !important; border-color: #fff !important; }
+
+        footer { text-align: center; padding: 15px; font-size: 0.9rem; background-color: #000; color: #888; border-top: 1px solid #333;}
+
+        /* Responsivo */
+        @media (max-width: 600px) {
+            .options-grid { grid-template-columns: 1fr; }
+            .modal-question { font-size: 1.2rem; }
+            header h1 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Jeoparty Estadístico</h1>
+    </header>
+
+    <main>
+        <div id="setup-screen">
+            <h2 style="margin-bottom: 20px; color: var(--text-gold);">Configuración del Juego</h2>
+            <div class="input-group">
+                <label for="num-players">Número de Jugadores (2 - 5):</label>
+                <select id="num-players" onchange="generatePlayerInputs()">
+                    <option value="2">2 Jugadores</option>
+                    <option value="3">3 Jugadores</option>
+                    <option value="4">4 Jugadores</option>
+                    <option value="5">5 Jugadores</option>
+                </select>
+            </div>
+            <div id="player-names">
+                </div>
+            <button class="btn" style="margin-top: 20px;" onclick="startGame()">Iniciar Partida</button>
+        </div>
+
+        <div id="game-screen">
+            <div id="scoreboard">
+                </div>
+            <div class="board-container">
+                <div id="jeopardy-board">
+                    </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="question-modal">
+        <div class="modal-content">
+            <div class="modal-points" id="modal-pts">Categoría - $0</div>
+            <div class="modal-question" id="modal-text">¿Pregunta?</div>
+            <div class="options-grid" id="modal-options">
+                </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; JMGV-PTEL. gamificacion probabilidad y estadistica. Todos los derechos reservados.
+    </footer>
+
+    <script>
+        /* =========================================
+           BASE DE DATOS DE PREGUNTAS (10 por categoría)
+        ========================================= */
+        const questionDB = {
+            "Binomial": [
+                { q: "¿Qué parámetro representa la probabilidad de éxito en un solo ensayo?", options: ["El parámetro 'p'", "El parámetro 'q'", "El parámetro 'n'", "El parámetro 'x'"], a: 0 },
+                { q: "Si la probabilidad de éxito es p, ¿cuál es la ecuación matemática de q?", options: ["q = 1 - p", "q = p - 1", "q = p / n", "q = 1 + p"], a: 0 },
+                { q: "¿Qué condición fundamental requiere la distribución binomial en sus ensayos?", options: ["Que sean independientes", "Que sean dependientes", "Que no tengan límite", "Que p sea variable"], a: 0 },
+                { q: "En la fórmula \\( P(x) = \\binom{n}{x} p^x q^{n-x} \\), ¿qué calcula \\( \\binom{n}{x} \\)?", options: ["El número combinatorio", "El número de ensayos", "La desviación estándar", "El error probabilístico"], a: 0 },
+                { q: "¿Cuál es la fórmula para calcular la Varianza (\\(\\sigma^2\\)) en una Binomial?", options: ["\\(\\sigma^2 = n \\cdot p \\cdot q\\)", "\\(\\sigma^2 = n \\cdot p\\)", "\\(\\sigma^2 = \\sqrt{n p q}\\)", "\\(\\sigma^2 = n \\cdot q\\)"], a: 0 },
+                { q: "¿Cuál es la fórmula para calcular la Media (\\(\\mu\\)) en una distribución Binomial?", options: ["\\(\\mu = n \\cdot p\\)", "\\(\\mu = n \\cdot p \\cdot q\\)", "\\(\\mu = p / n\\)", "\\(\\mu = x \\cdot p\\)"], a: 0 },
+                { q: "Si se lanzan 10 monedas, ¿cuál es el valor de 'n' en la distribución binomial?", options: ["El valor n es 10", "El valor n es 0.5", "El valor n es 5.0", "El valor n es 100"], a: 0 },
+                { q: "La distribución binomial pertenece a la clasificación de variables aleatorias...", options: ["Variables Discretas", "Variables Continuas", "Variables Nominales", "Variables Constantes"], a: 0 },
+                { q: "En un control de piezas donde solo hay 'Aprobado' o 'Defectuoso', se aplica una:", options: ["Distribución Binomial", "Distribución Normal", "Distribución de Poisson", "Distribución Exponencial"], a: 0 },
+                { q: "Si \\(p = 0.2\\) y \\(n = 50\\), ¿cuál es el valor esperado (media) del experimento?", options: ["El valor esperado es 10", "El valor esperado es 20", "El valor esperado es 0.2", "El valor esperado es 50"], a: 0 }
+            ],
+            "Poisson": [
+                { q: "¿Qué parámetro principal (tasa promedio de ocurrencia) define a Poisson?", options: ["El parámetro Lambda (λ)", "El parámetro Sigma (σ)", "El parámetro Alfa (α)", "El parámetro Beta (β)"], a: 0 },
+                { q: "En la distribución de Poisson, ¿cómo son numéricamente la media y la varianza?", options: ["Son exactamente iguales", "La varianza es mayor", "La media es muy superior", "Son inversamente prop."], a: 0 },
+                { q: "Es el tipo de variable sobre la cual opera la distribución de Poisson:", options: ["Variables Discretas", "Variables Continuas", "Variables Cualitativas", "Variables Ordinales"], a: 0 },
+                { q: "En la fórmula \\( P(x) = \\frac{\\lambda^x e^{-\\lambda}}{x!} \\), ¿cuál es el valor de 'e'?", options: ["Constante de Euler (2.718)", "Constante de Planck", "Número Pi (3.1415)", "Cero Absoluto (-273)"], a: 0 },
+                { q: "¿Para qué tipo de eventos es ideal utilizar la distribución de Poisson?", options: ["Eventos raros en el tiempo", "Eventos de éxito o fracaso", "Eventos simétricos de masa", "Eventos con límite exacto"], a: 0 },
+                { q: "Si ocurren en promedio 3 fallas por hora, ¿cuál es el valor de Lambda (λ)?", options: ["El valor de Lambda es 3", "El valor de Lambda es 1", "El valor de Lambda es 0.5", "El valor de Lambda es 6"], a: 0 },
+                { q: "¿Qué operador matemático está representado por el símbolo de exclamación (!)?", options: ["El operador Factorial", "El operador Derivada", "El operador Integrador", "El operador Sumatorio"], a: 0 },
+                { q: "Un ejemplo clásico de aplicación de Poisson en control de tráfico es:", options: ["Autos que pasan por peaje", "Velocidad media del auto", "Peso exacto de cada auto", "Marca de los automóviles"], a: 0 },
+                { q: "Si la varianza de una distribución de Poisson es 5, ¿cuál es su media aritmética?", options: ["La media aritmética es 5", "La media aritmética es 25", "La media aritmética es 10", "La media aritmética es 2.5"], a: 0 },
+                { q: "¿Cuándo se puede usar Poisson como aproximación de la distribución Binomial?", options: ["Cuando n es grande y p pequeño", "Cuando n es pequeño y p grande", "Cuando n y p son casi iguales", "Cuando n es menor que cero"], a: 0 }
+            ],
+            "Normal": [
+                { q: "¿Qué forma geométrica característica tiene la gráfica de la Distribución Normal?", options: ["Forma de campana simétrica", "Forma de parábola inversa", "Forma escalonada continua", "Forma de línea horizontal"], a: 0 },
+                { q: "¿Cuáles son los dos parámetros que definen completamente una curva Normal?", options: ["Media (μ) y Desviación (σ)", "Media (μ) y Varianza (p)", "Lambda (λ) y Varianza (σ)", "Éxito (p) y Fracaso (q)"], a: 0 },
+                { q: "En la distribución Normal Estándar, ¿cuál es el valor de su media y su desviación?", options: ["Media es 0 y Desviación es 1", "Media es 1 y Desviación es 0", "Media es 0 y Desviación es 0", "Media es 1 y Desviación es 1"], a: 0 },
+                { q: "¿Qué porcentaje aproximado de datos cae entre \\(\\mu - \\sigma\\) y \\(\\mu + \\sigma\\)?", options: ["Aproximadamente el 68.2%", "Aproximadamente el 95.4%", "Aproximadamente el 99.7%", "Aproximadamente el 50.0%"], a: 0 },
+                { q: "¿Qué nombre recibe el proceso de convertir un valor 'X' en un valor 'Z'?", options: ["Estandarización de datos", "Normalización binomial", "Derivación probabilística", "Aproximación de Poisson"], a: 0 },
+                { q: "En la ecuación de Z, \\( Z = \\frac{X - \\mu}{\\sigma} \\), ¿qué representa la variable 'X'?", options: ["El valor del dato a analizar", "El promedio poblacional", "La desviación de la muestra", "El área bajo la curva"], a: 0 },
+                { q: "¿Cuál es el área total bajo la curva de cualquier función de densidad de probabilidad?", options: ["Es exactamente igual a 1.0", "Es exactamente igual a 0.5", "Es exactamente igual a 100", "Depende de la desviación σ"], a: 0 },
+                { q: "A diferencia de Binomial y Poisson, la Distribución Normal aplica para variables:", options: ["Variables Continuas (reales)", "Variables Discretas (enteras)", "Variables Cualitativas puras", "Variables Categóricas fijas"], a: 0 },
+                { q: "Si la media de estaturas es 1.70m, ¿cuál es la probabilidad de medir exactamente 1.70m?", options: ["La probabilidad es cero (0)", "La probabilidad es del 50%", "La probabilidad es del 100%", "La probabilidad es del 68%"], a: 0 },
+                { q: "Es un ejemplo clásico de un fenómeno que sigue una distribución normal:", options: ["El peso de recién nacidos", "Caras al lanzar un dado", "Llamadas que entran al día", "Autos que pasan un peaje"], a: 0 }
+            ],
+            "Exponencial": [
+                { q: "¿Qué mide comúnmente la distribución de probabilidad Exponencial?", options: ["El tiempo entre dos eventos", "El número total de éxitos", "La sumatoria de los fracasos", "La probabilidad simétrica"], a: 0 },
+                { q: "La distribución exponencial tiene la propiedad de 'falta de memoria'. ¿Qué significa?", options: ["El pasado no afecta el futuro", "No requiere datos históricos", "Su varianza siempre es cero", "Se olvida de los promedios"], a: 0 },
+                { q: "Si un evento sigue distribución de Poisson con tasa λ, el tiempo entre eventos es:", options: ["Distribución Exponencial", "Distribución Normal Est.", "Distribución Binomial pura", "Distribución Hipergeom."], a: 0 },
+                { q: "¿Cuál es el parámetro fundamental que utiliza la distribución exponencial?", options: ["La tasa de ocurrencia (λ)", "La probabilidad de éxito (p)", "La desviación estándar (σ)", "El número de ensayos (n)"], a: 0 },
+                { q: "En la distribución exponencial, si la tasa es λ, ¿cuál es el valor de la Media?", options: ["La media es igual a 1 / λ", "La media es exactamente λ", "La media es λ al cuadrado", "La media es 1 menos λ"], a: 0 },
+                { q: "¿Qué forma tiene la gráfica de la función de densidad de la dist. exponencial?", options: ["Una curva decreciente", "Una campana simétrica", "Una línea recta horizontal", "Un patrón de dispersión"], a: 0 },
+                { q: "La fórmula de densidad es \\( f(x) = \\lambda e^{-\\lambda x} \\). ¿Para qué valores de x aplica?", options: ["Para x mayor o igual a cero", "Para cualquier valor de x", "Para x estrictamente negativo", "Para x entre cero y uno"], a: 0 },
+                { q: "Un ejemplo de uso de la distribución exponencial en ingeniería es:", options: ["Tiempo de vida de un foco", "Piezas rotas en una fábrica", "Errores en una página web", "Estatura de los ingenieros"], a: 0 },
+                { q: "En la distribución exponencial, la Media y la Desviación Estándar son:", options: ["Matemáticamente iguales", "Inversamente proporcionales", "La desviación es el doble", "La media es el cuadrado"], a: 0 },
+                { q: "¿Cómo se calcula la Varianza en una distribución exponencial con tasa λ?", options: ["La varianza es 1 / (λ^2)", "La varianza es igual a λ", "La varianza es (λ^2) / 2", "La varianza es 1 - (λ^2)"], a: 0 }
+            ]
+        };
+
+        /* =========================================
+           SINTETIZADOR DE AUDIO (Web Audio API)
+        ========================================= */
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            if (type === 'correct') {
+                // Campanilla (Sine wave rápida)
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(880, audioCtx.currentTime); // A5
+                osc.frequency.exponentialRampToValueAtTime(1760, audioCtx.currentTime + 0.1); // A6
+                gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.5);
+            } else {
+                // Chicharra (Sawtooth wave grave)
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime); // Grave
+                gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            }
+        }
+
+        /* =========================================
+           LÓGICA DEL JUEGO
+        ========================================= */
+        let players = [];
+        let currentPlayerIndex = 0;
+        let selectedPoints = 0;
+        let currentCardDiv = null;
+        let isAnswering = false;
+
+        // Generar inputs iniciales
+        function generatePlayerInputs() {
+            const num = document.getElementById("num-players").value;
+            const container = document.getElementById("player-names");
+            container.innerHTML = "";
+            for (let i = 1; i <= num; i++) {
+                container.innerHTML += `
+                    <div class="input-group">
+                        <label>Nombre del Jugador ${i}:</label>
+                        <input type="text" id="p${i}-name" value="Jugador ${i}">
+                    </div>`;
+            }
+        }
+
+        // Barajar array
+        function shuffle(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex != 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        function startGame() {
+            const num = document.getElementById("num-players").value;
+            players = [];
+            for (let i = 1; i <= num; i++) {
+                let name = document.getElementById(`p${i}-name`).value || `Jugador ${i}`;
+                players.push({ name: name, score: 0 });
+            }
+            
+            document.getElementById("setup-screen").style.display = "none";
+            document.getElementById("game-screen").style.display = "flex";
+            
+            updateScoreboard();
+            buildBoard();
+        }
+
+        function updateScoreboard() {
+            const board = document.getElementById("scoreboard");
+            board.innerHTML = "";
+            players.forEach((p, index) => {
+                let activeClass = index === currentPlayerIndex ? "active-turn" : "";
+                board.innerHTML += `
+                    <div class="player-score ${activeClass}" id="scorebox-${index}">
+                        <h3>${p.name}</h3>
+                        <p>$${p.score}</p>
+                    </div>`;
+            });
+        }
+
+        function buildBoard() {
+            const board = document.getElementById("jeopardy-board");
+            board.innerHTML = "";
+            
+            const categories = Object.keys(questionDB);
+            
+            // Encabezados
+            categories.forEach(cat => {
+                board.innerHTML += `<div class="category-header">${cat}</div>`;
+            });
+
+            // Generar 5 filas (100 a 500)
+            let boardQuestions = {};
+            categories.forEach(cat => {
+                // Seleccionar aleatoriamente 5 preguntas de las 10 de la BD
+                let shuffledQs = shuffle([...questionDB[cat]]);
+                boardQuestions[cat] = shuffledQs.slice(0, 5);
+            });
+
+            const points = [100, 200, 300, 400, 500];
+            
+            points.forEach((pts, rowIndex) => {
+                categories.forEach(cat => {
+                    let qData = boardQuestions[cat][rowIndex];
+                    let cardId = `card-${cat}-${pts}`;
+                    board.innerHTML += `<div class="question-card" id="${cardId}" 
+                        onclick='openQuestion("${cat}", ${pts}, ${JSON.stringify(qData)}, this)'>$${pts}</div>`;
+                });
+            });
+        }
+
+        function openQuestion(cat, pts, qData, cardElement) {
+            if (cardElement.classList.contains("disabled") || isAnswering) return;
+            
+            selectedPoints = pts;
+            currentCardDiv = cardElement;
+            isAnswering = true; // Previene clics múltiples
+
+            document.getElementById("modal-pts").innerText = `${cat} - $${pts}`;
+            document.getElementById("modal-text").innerHTML = qData.q;
+            
+            // Re-render MathJax en el modal
+            if(window.MathJax) { MathJax.typesetPromise([document.getElementById("modal-text")]); }
+
+            const optionsGrid = document.getElementById("modal-options");
+            optionsGrid.innerHTML = "";
+
+            // Crear array de opciones mezclando y guardando índice correcto
+            let opts = qData.options.map((text, index) => ({ text, isCorrect: index === qData.a }));
+            opts = shuffle(opts);
+
+            opts.forEach(opt => {
+                let btn = document.createElement("button");
+                btn.className = "option-btn";
+                btn.innerHTML = opt.text;
+                btn.onclick = () => checkAnswer(opt.isCorrect, btn, opts);
+                optionsGrid.appendChild(btn);
+            });
+            
+            // Re-render MathJax en botones
+            if(window.MathJax) { MathJax.typesetPromise([optionsGrid]); }
+
+            document.getElementById("question-modal").style.display = "flex";
+        }
+
+        function checkAnswer(isCorrect, selectedBtn, allOptsData) {
+            const btns = document.querySelectorAll(".option-btn");
+            btns.forEach(btn => btn.onclick = null); // Desactivar clics
+
+            if (isCorrect) {
+                playSound('correct');
+                selectedBtn.classList.add("correct");
+                players[currentPlayerIndex].score += selectedPoints;
+            } else {
+                playSound('wrong');
+                selectedBtn.classList.add("wrong");
+                players[currentPlayerIndex].score -= selectedPoints;
+                
+                // Iluminar la correcta
+                btns.forEach((btn, index) => {
+                    if (allOptsData[index].isCorrect) {
+                        btn.classList.add("correct");
+                    }
+                });
+            }
+
+            // Desactivar la tarjeta en el tablero
+            currentCardDiv.classList.add("disabled");
+            currentCardDiv.innerText = "";
+
+            // Pasar turno y cerrar modal después de 2.5s para que lean la respuesta
+            setTimeout(() => {
+                document.getElementById("question-modal").style.display = "none";
+                currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+                updateScoreboard();
+                isAnswering = false;
+            }, 2500);
+        }
+
+        // Iniciar UI
+        generatePlayerInputs();
+    </script>
+</body>
+</html>
