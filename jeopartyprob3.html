@@ -117,9 +117,9 @@
 
         .jeopardy-board {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 8px;
-            min-width: 600px;
+            min-width: 800px;
         }
 
         .category-header {
@@ -350,7 +350,23 @@
                     { q: "Un tren llega a la estación cada 20 minutos de forma constante. ¿Qué modelo aplica al tiempo de espera?", opts: ["Un modelo estadístico de tipo Binomial.", "Un modelo estadístico Uniforme Continuo.", "Un modelo estadístico de Normal Estándar.", "Un modelo de distribución de tipo Poisson."], a: 1 },
                     { q: "En una distribución Uniforme, la mediana y la media poseen la siguiente característica matemática:", opts: ["La mediana es siempre mayor que la media.", "Ambas medidas estadísticas son idénticas.", "La media es el doble del valor de la mediana.", "No existe correlación entre estas medidas."], a: 1 }
                 ]
+            },
+            {
+                category: "Arquitectura de Datos",
+                questions: [
+                    { q: "¿Cuál es la regla fundamental sobre las celdas vacías al construir una matriz analítica de datos?", opts: ["Deben rellenarse con texto puro evaluado.", "Una matriz nunca debe tener celdas vacías.", "Se dejan en blanco si el usuario no sabe.", "Se interpolan usando promedios simples."], a: 1 },
+                    { q: "Según el manual, ¿qué código numérico se recomienda usar empíricamente para 'No responde / No sabe'?", opts: ["El código recomendado es el número 00.", "El código recomendado es el número 99.", "El código recomendado es el número 90.", "El código recomendado es el número 10."], a: 1 },
+                    { q: "Al definir una variable en el software, ¿qué tipo de formato se debe evitar críticamente para no restringir el análisis?", opts: ["El formato numérico de tipo continuo.", "El formato de tipo cadena (texto puro).", "El formato de valores perdidos exacto.", "El formato de escala de tipo intervalo."], a: 1 },
+                    { q: "¿Qué estadísticos se pueden calcular en una escala Nominal, donde las categorías no tienen ninguna jerarquía?", opts: ["Solamente la Moda y las Frecuencias.", "La Media, la Varianza y la Desviación.", "La Moda, la Mediana y el Rango total.", "Únicamente la Mediana y la Varianza."], a: 0 },
+                    { q: "Una variable que mide la 'Clase Social' (Baja, Media, Alta), ¿a qué escala del espectro de precisión corresponde?", opts: ["Escala de medición de tipo Nominal.", "Escala de medición de tipo Ordinal.", "Escala de medición de tipo Intervalo.", "Escala de medición de tipo Constante."], a: 1 },
+                    { q: "En la Multirrespuesta Dicotómica, ¿cuál es su principal ventaja al momento de registrar y tabular los datos?", opts: ["Reduce drásticamente el costo digitado.", "Exhaustividad total, sin pérdida de datos.", "Limita las variables a un número N fijo.", "Usa menor memoria RAM en la computadora."], a: 1 },
+                    { q: "En Machine Learning, ¿qué error comete el algoritmo de forma inherente si codificamos $1=$ Londres, $2=$ París y $3=$ Moscú?", opts: ["Crea vectores binarios muy complejos.", "Asume que Moscú vale 3 veces Londres.", "Rechaza las ciudades por ser de Europa.", "Transforma la matriz en texto puro nulo."], a: 1 },
+                    { q: "¿Qué técnica de codificación crea vectores binarios (ej. $[0, 1, 0, 0]$) para eliminar jerarquías falsas en variables nominales?", opts: ["La técnica llamada Label Encoding.", "La técnica llamada Ordinal Encoding.", "La técnica llamada One-Hot Encoding.", "La técnica llamada Binary Extrapolation."], a: 2 },
+                    { q: "¿Cuál es el riesgo principal (computacional) de utilizar masivamente el One-Hot Encoding en bases de datos con miles de categorías?", opts: ["Inyectar pesos numéricos extremadamente falsos.", "Sufrir la 'Maldición de la Dimensionalidad'.", "Asumir distancias iguales entre todos los rangos.", "Eliminar categorías críticas sin previo aviso."], a: 1 },
+                    { q: "Según la regla de 'Numerización Absoluta', reemplazar la palabra 'Bailar' por el número '2' es útil principalmente porque...", opts: ["Permite tener múltiples celdas vacías seguras.", "Es computacionalmente infinitamente más limpio.", "Obliga al sistema a usar siempre Ordinal Encoding.", "Evita clasificar la variable estadística como nominal."], a: 1 }
+                ]
             }
+            
         ];
 
         // --- 2. VARIABLES GLOBALES DE ESTADO ---
