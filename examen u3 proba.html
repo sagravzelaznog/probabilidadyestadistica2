@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen: Distribuciones y Datos</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+ 
+    <style>
+        /* ================= ESTILOS GLOBALES ================= */
+        :root {
+            --kahoot-purple: #46178f;
+            --red: #e21b3c;
+            --blue: #1368ce;
+            --yellow: #d89e00;
+            --green: #26890c;
+            --bg: #f2f2f2;
+            --gray: #e6e6e6;
+            --dark-gray: #333;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: var(--bg); color: var(--dark-gray); }
+        
+        #app { max-width: 1200px; margin: 0 auto; padding: 20px; display: flex; flex-direction: column; min-height: 100vh; box-sizing: border-box; }
+        .screen { display: none; flex-direction: column; align-items: center; justify-content: center; flex: 1; }
+        .screen.active { display: flex; }
+
+        .login-box { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 500px; box-sizing: border-box;}
+        input { width: 100%; padding: 15px; margin: 15px 0; border: 2px solid #ccc; border-radius: 5px; font-size: 16px; box-sizing: border-box; }
+        
+        .btn-main { background: var(--kahoot-purple); color: white; border: none; padding: 15px 20px; font-size: 18px; font-weight: bold; border-radius: 5px; cursor: pointer; width: 100%; margin-bottom: 10px; transition: 0.2s; }
+        .btn-main:hover { filter: brightness(1.1); }
+        .btn-secondary { background: var(--blue); color: white; border: none; padding: 15px 20px; font-size: 16px; font-weight: bold; border-radius: 5px; cursor: pointer; width: 100%; }
+
+        .header { display: flex; justify-content: space-between; flex-wrap: wrap; width: 100%; padding: 15px 20px; background: white; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; font-weight: bold; font-size: 18px; box-sizing: border-box; gap: 10px;}
+
+        /* ================= ÁREA DE PREGUNTAS ================= */
+        .exam-container { display: flex; width: 100%; gap: 20px; flex-direction: column; }
+        .questions-area { width: 100%; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: grid; grid-template-columns: 1fr; gap: 12px; box-sizing: border-box; }
+        
+        .question-row { display: flex; align-items: center; justify-content: space-between; background: var(--gray); padding: 12px 15px; border-radius: 8px; font-size: 16px; }
+        .math-q { font-weight: bold; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; line-height: 1.6;}
+        
+        .click-zone { min-width: 180px; height: auto; min-height: 40px; background: white; border: 2px dashed var(--blue); border-radius: 5px; display: inline-flex; align-items: center; justify-content: center; font-size: 15px; cursor: pointer; transition: 0.2s; padding: 5px 15px; margin: 0 5px; color: var(--blue); font-weight: bold; text-align: center; }
+        .click-zone:hover { background: #d0e7ff; transform: scale(1.02); }
+        .click-zone.filled { border: 2px solid var(--kahoot-purple); background: #f9f6ff; cursor: default; color: var(--dark-gray); transform: none; }
+        .click-zone.correct { border-color: var(--green); background: #e8f5e9; }
+        .click-zone.incorrect { border-color: var(--red); background: #ffebee; }
+
+        /* ================= MODAL DE RESPUESTAS ================= */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 2000; align-items: center; justify-content: center; padding: 15px; box-sizing: border-box;  }
+        .modal-overlay.active { display: flex; }
+        
+        .modal-content { background: white; padding: 25px; border-radius: 12px; width: 100%; max-width: 700px; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.3); box-sizing: border-box;}
+        .modal-content h3 { color: var(--kahoot-purple); margin-top: 0; text-align: center; font-size: 22px;}
+        
+        .modal-answers-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px; margin-bottom: 20px; padding-right: 5px; }
+        
+        .answer-btn { background: var(--kahoot-purple); color: white; padding: 12px 15px; border-radius: 8px; cursor: pointer; text-align: center; font-size: 15px; font-weight: bold; border: none; width: 100%; transition: 0.2s; box-shadow: 0 3px 0 rgba(0,0,0,0.2); }
+        .answer-btn:hover { filter: brightness(1.15); transform: translateY(-2px); box-shadow: 0 5px 0 rgba(0,0,0,0.2); }
+        .answer-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.2); }
+
+        .btn-cancel { background: #999; color: white; border: none; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 5px; cursor: pointer; width: 100%; }
+
+        #cheat-warning { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(226, 27, 60, 0.95); color: white; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 3000; text-align: center; padding: 20px; box-sizing: border-box; }
+        #cheat-warning h1 { font-size: 40px; margin-bottom: 10px; }
+
+        /* ================= ESTILOS DE IMPRESIÓN ================= */
+        #print-area { display: none; }
+        
+        @media print {
+            body { background: white; color: black; font-size: 9pt; margin: 0; }
+            #app, #cheat-warning, .modal-overlay { display: none !important; }
+            #print-area { display: block !important; padding: 0; margin: 0; }
+            
+            .print-header { border-bottom: 2px solid black; padding-bottom: 5px; margin-bottom: 10px; text-align: center; }
+            .print-header h1 { margin: 0 0 5px 0; font-size: 14pt; }
+            .print-info { display: flex; justify-content: space-between; font-size: 10pt; font-weight: bold; }
+
+            .print-questions-grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 20px; row-gap: 8px; }
+            
+            .print-q { border-bottom: 1px dashed #ccc; padding-bottom: 4px; display: flex; align-items: center; break-inside: avoid; flex-wrap: wrap; }
+            
+            body.print-blank .ans-box { width: 60px; height: 18px; border: 1px solid black; display: inline-block; margin: 0 5px; }
+            body.print-blank .ans-graded { display: none; }
+            
+            body.print-graded .ans-box { display: none; }
+            body.print-graded .ans-graded { font-weight: bold; font-size: 9pt; margin: 0 5px; }
+            .ans-graded.correct { color: green; }
+            .ans-graded.wrong { color: red; text-decoration: line-through; }
+            .ans-graded.correction { color: green; font-size: 8pt; }
+            
+            @page { margin: 1cm; }
+        }
+
+        @media (max-width: 600px) {
+            .math-q { font-size: 14px; }
+            .click-zone { min-width: 100%; margin: 5px 0; }
+            .modal-answers-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="cheat-warning">
+        <h1>⚠️ ALERTA DE BLOQUEO ⚠️</h1>
+        <p>Has salido de la pantalla del examen.</p>
+        <p>Si no regresas en menos de 5 segundos, tu examen será anulado.</p>
+    </div>
+
+    <div id="answer-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Selecciona la respuesta correcta</h3>
+            <div id="modal-answers-grid" class="modal-answers-grid">
+                </div>
+            <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+        </div>
+    </div>
+
+    <div id="app">
+        <div id="screen-login" class="screen active">
+            <div class="login-box">
+                <h2 style="color: var(--kahoot-purple); margin-top:0;">Evaluación: Distribuciones de Probabilidad y Datos</h2>
+                <p>Completa los 10 enunciados haciendo clic en los recuadros para elegir tu respuesta. Cada acierto suma 1 punto.<br><b style="color:red;">Atención:</b> Salir de la ventana por más de 5 segundos anulará tu examen.</p>
+                <input type="text" id="student-name" placeholder="Escribe tu Nombre Completo" autocomplete="off">
+                <button class="btn-main" onclick="startExam()">COMENZAR EXAMEN INTERACTIVO</button>
+                <button class="btn-secondary" onclick="printBlank()">🖨️ Imprimir Formato en Blanco</button>
+            </div>
+        </div>
+
+        <div id="screen-quiz" class="screen">
+            <div class="header">
+                <span id="display-name">Alumno: </span>
+                <span id="display-progress">Aciertos: 0 / 15</span>
+            </div>
+
+            <div class="exam-container">
+                <div class="questions-area" id="questions-container">
+                    </div>
+            </div>
+        </div>
+
+        <div id="screen-results" class="screen">
+            <div class="login-box">
+                <h2>Evaluación Finalizada</h2>
+                <h1 id="final-score" style="color: var(--blue); font-size: 48px; margin: 10px 0;">0 / 15</h1>
+                <p id="time-summary"></p>
+                <button class="btn-main" style="background: var(--green);" onclick="printGraded()">🖨️ Generar PDF Calificado</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="print-area"></div>
+
+    <script>
+        // ================= BASE DE DATOS COMPLETA =================
+        const db = [
+            { id: 1, pre: "\\text{1. ¿Qué tipo de variable analiza principalmente la distribución Binomial en sus estudios?}", post: "", ans: "Variables aleatorias discretas enteras." },
+            { id: 2, pre: "\\text{2. En la ecuación Binomial, ¿qué representa matemáticamente el parámetro 'n'?}", post: "", ans: "El número total de ensayos idénticos." },
+            { id: 3, pre: "\\text{3. Si la probabilidad de éxito (p) es 0.40, ¿cuál es el valor exacto del fracaso (q)?}", post: "", ans: "El valor exacto del fracaso es 0.60." },
+            { id: 4, pre: "\\text{4. ¿Cuál es la fórmula correcta para calcular la Esperanza (Media) en una Binomial?}", post: "", ans: "La media se calcula mediante: \\( \\mu = np \\)" },
+            { id: 5, pre: "\\text{5. Un requisito indispensable para que un experimento sea considerado Binomial es:}", post: "", ans: "Que los ensayos sean independientes." },
+            { id: 6, pre: "\\text{6. ¿Qué nombre recibe un experimento aleatorio que consta de un solo ensayo Binomial?}", post: "", ans: "Ensayo de variable de Bernoulli." },
+            { id: 7, pre: "\\text{7. En la fórmula \\( P(x) = \\binom{n}{x} p^x q^{n-x} \\), el término \\( \\binom{n}{x} \\) representa:}", post: "", ans: "El coeficiente binomial combinatorio." },
+            { id: 8, pre: "\\text{8. ¿Cuál de los siguientes es un ejemplo clásico de aplicación Binomial en industria?}", post: "", ans: "Contar piezas defectuosas en un lote." },
+            { id: 9, pre: "\\text{9. La varianza de una distribución Binomial se calcula utilizando la siguiente expresión:}", post: "", ans: "Varianza es igual a: \\( \\sigma^2 = npq \\)" },
+            { id: 10, pre: "\\text{10. Si un experimento se repite 50 veces y la probabilidad de éxito es 0.1, la media es:}", post: "", ans: "La esperanza o media es exactamente 5.0" },
+            { id: 11, pre: "\\text{11. ¿Cuál es la forma gráfica característica de la Distribución Normal en el plano cartesiano?}", post: "", ans: "Forma de campana simétrica bilateral." },
+            { id: 12, pre: "\\text{12. ¿Qué parámetros estadísticos definen completamente a una distribución Normal típica?}", post: "", ans: "La media (\\( \\mu \\)) y la varianza (\\( \\sigma^2 \\))." },
+            { id: 13, pre: "\\text{13. En la Distribución Normal Estándar, ¿cuáles son los valores fijos de su media y varianza?}", post: "", ans: "Media igual a cero y varianza igual a uno." },
+            { id: 14, pre: "\\text{14. El área total bajo la curva de cualquier función de densidad de probabilidad Normal es:}", post: "", ans: "Exactamente igual a 1 (o el 100%)." },
+            { id: 15, pre: "\\text{15. ¿Qué porcentaje de los datos se encuentra a \\( \\pm 1\\sigma \\) de la media según la regla empírica?}", post: "", ans: "Aproximadamente el 68.2% de los datos." },
+            { id: 16, pre: "\\text{16. ¿Cómo se llama el proceso de convertir una variable Normal 'X' en una variable 'Z'?}", post: "", ans: "Proceso de estandarización o tipificación." },
+            { id: 17, pre: "\\text{17. La fórmula para calcular el valor Z es: \\( Z = \\frac{X - \\mu}{\\sigma} \\). ¿Qué indica Z?}", post: "", ans: "Número de desviaciones desde la media." },
+            { id: 18, pre: "\\text{18. ¿Qué característica de asimetría posee una Distribución Normal teóricamente perfecta?}", post: "", ans: "Su coeficiente de asimetría es igual a cero." },
+            { id: 19, pre: "\\text{19. La distribución Normal es asintótica respecto al eje X. ¿Qué significa este concepto?}", post: "", ans: "Que se acerca al eje X pero nunca lo toca." },
+            { id: 20, pre: "\\text{20. ¿Cuál es una aplicación típica de la distribución Normal en las ciencias naturales?}", post: "", ans: "Modelar la estatura de una población." },
+            { id: 21, pre: "\\text{21. ¿Qué tipo de eventos modela de forma principal la distribución estadística de Poisson?}", post: "", ans: "Eventos raros en un intervalo de tiempo." },
+            { id: 22, pre: "\\text{22. ¿Cuál es el parámetro principal (y único necesario) para la distribución de Poisson?}", post: "", ans: "La tasa promedio de ocurrencia (\\( \\lambda \\))." },
+            { id: 23, pre: "\\text{23. Una propiedad matemática única de Poisson es la relación entre su media y varianza:}", post: "", ans: "La media y la varianza son exactamente iguales." },
+            { id: 24, pre: "\\text{24. En la ecuación \\( P(x) = \\frac{e^{-\\lambda} \\lambda^x}{x!} \\), ¿qué representa la letra 'e'?}", post: "", ans: "La base de los logaritmos neperianos." },
+            { id: 25, pre: "\\text{25. Si en un banco llegan en promedio 3 clientes por minuto, el valor de \\( \\lambda \\) es:}", post: "", ans: "El valor de lambda es exactamente 3.0" },
+            { id: 26, pre: "\\text{26. Bajo ciertas condiciones, Poisson puede usarse como aproximación de qué distribución:}", post: "", ans: "Aproximación de la distribución Binomial." },
+            { id: 27, pre: "\\text{27. ¿Qué condición temporal o espacial es típica en problemas que involucran a Poisson?}", post: "", ans: "Las ocurrencias se dan en un área o lapso." },
+            { id: 28, pre: "\\text{28. ¿Cuál es un ejemplo de aplicación práctica ideal para la distribución de Poisson?}", post: "", ans: "Número de llamadas a un conmutador por hora." },
+            { id: 29, pre: "\\text{29. Si la varianza de una distribución de Poisson es 4, ¿cuál es su desviación estándar?}", post: "", ans: "La desviación estándar es exactamente 2.0" },
+            { id: 30, pre: "\\text{30. En la fórmula de Poisson, el término \\( x! \\) en el denominador corresponde matemáticamente a:}", post: "", ans: "El factorial del número exacto de éxitos." },
+            { id: 31, pre: "\\text{31. La característica principal de una distribución Uniforme (Continua o Discreta) es que:}", post: "", ans: "Todos los valores tienen la misma probabilidad." },
+            { id: 32, pre: "\\text{32. En una distribución Uniforme Continua definida en el intervalo [a, b], la altura de la curva es:}", post: "", ans: "Exactamente igual a: \\( 1 / (b - a) \\)" },
+            { id: 33, pre: "\\text{33. La forma geométrica que describe gráficamente a la distribución Uniforme Continua es:}", post: "", ans: "Una forma gráfica de rectángulo perfecto." },
+            { id: 34, pre: "\\text{34. Para una Uniforme Continua en [a, b], la fórmula de la esperanza (Media) poblacional es:}", post: "", ans: "La esperanza o media es: \\( (a + b) / 2 \\)" },
+            { id: 35, pre: "\\text{35. Lanzar un dado honesto de 6 caras es un ejemplo perfecto de una distribución estadística:}", post: "", ans: "Distribución Uniforme de tipo Discreta." },
+            { id: 36, pre: "\\text{36. ¿Cuál es la fórmula para calcular la Varianza en una distribución Uniforme Continua?}", post: "", ans: "Varianza es igual a: \\( (b - a)^2 / 12 \\)" },
+            { id: 37, pre: "\\text{37. Si una variable se distribuye uniformemente entre 0 y 10, ¿cuál es su probabilidad en X=5? (Continua)}", post: "", ans: "La probabilidad puntual en continua es cero." },
+            { id: 38, pre: "\\text{38. En la distribución Uniforme Continua, el área total del rectángulo formado siempre suma:}", post: "", ans: "Un área total estrictamente igual a uno." },
+            { id: 39, pre: "\\text{39. Un tren llega a la estación cada 20 minutos de forma constante. ¿Qué modelo aplica al tiempo de espera?}", post: "", ans: "Un modelo estadístico Uniforme Continuo." },
+            { id: 40, pre: "\\text{40. En una distribución Uniforme, la mediana y la media poseen la siguiente característica matemática:}", post: "", ans: "Ambas medidas estadísticas son idénticas." },
+            { id: 41, pre: "\\text{41. ¿Cuál es la regla fundamental sobre las celdas vacías al construir una matriz analítica de datos?}", post: "", ans: "Una matriz nunca debe tener celdas vacías." },
+            { id: 42, pre: "\\text{42. Según el manual, ¿qué código numérico se recomienda usar empíricamente para 'No responde / No sabe'?}", post: "", ans: "El código recomendado es el número 99." },
+            { id: 43, pre: "\\text{43. Al definir una variable en el software, ¿qué tipo de formato se debe evitar críticamente para no restringir el análisis?}", post: "", ans: "El formato de tipo cadena (texto puro)." },
+            { id: 44, pre: "\\text{44. ¿Qué estadísticos se pueden calcular en una escala Nominal, donde las categorías no tienen ninguna jerarquía?}", post: "", ans: "Solamente la Moda y las Frecuencias." },
+            { id: 45, pre: "\\text{45. Una variable que mide la 'Clase Social' (Baja, Media, Alta), ¿a qué escala del espectro de precisión corresponde?}", post: "", ans: "Escala de medición de tipo Ordinal." },
+            { id: 46, pre: "\\text{46. En la Multirrespuesta Dicotómica, ¿cuál es su principal ventaja al momento de registrar y tabular los datos?}", post: "", ans: "Exhaustividad total, sin pérdida de datos." },
+            { id: 47, pre: "\\text{47. En Machine Learning, ¿qué error comete el algoritmo de forma inherente si codificamos $1=$ Londres, $2=$ París y $3=$ Moscú?}", post: "", ans: "Asume que Moscú vale 3 veces Londres." },
+            { id: 48, pre: "\\text{48. ¿Qué técnica de codificación crea vectores binarios (ej. $[0, 1, 0, 0]$) para eliminar jerarquías falsas en variables nominales?}", post: "", ans: "La técnica llamada One-Hot Encoding." },
+            { id: 49, pre: "\\text{49. ¿Cuál es el riesgo principal (computacional) de utilizar masivamente el One-Hot Encoding en bases de datos con miles de categorías?}", post: "", ans: "Sufrir la 'Maldición de la Dimensionalidad'." },
+            { id: 50, pre: "\\text{50. Según la regla de 'Numerización Absoluta', reemplazar la palabra 'Bailar' por el número '2' es útil principalmente porque...}", post: "", ans: "Es computacionalmente infinitamente más limpio." }
+        ];
+
+        let currentExamDb = [];
+        let availableAnswers = [];
+        let currentQuestionIdToAnswer = null;
+        
+        // ================= VARIABLES GLOBALES =================
+        let studentName = "";
+        let score = 0;
+        let placedItems = 0;
+        let startTime, endTime;
+        let examActive = false;
+        let userAnswers = {}; 
+        
+        let lastHiddenTime = 0;
+        let isCheater = false;
+
+        // ================= SELECCIÓN ALEATORIA DE 15 PREGUNTAS =================
+        function initRandomDB() {
+            // Selecciona 15 al azar y renumera sus incisos del 1 al 10
+            currentExamDb = [...db].sort(() => 0.5 - Math.random()).slice(0, 10).map((item, index) => {
+                let newPre = item.pre.replace(/\\text\{\d+\.\s/, `\\text{${index + 1}. `);
+                return { ...item, originalId: item.id, pre: newPre, id: index + 1 };
+            });
+            // Llena el arreglo de respuestas disponibles (mezcladas)
+            availableAnswers = [...currentExamDb].sort(() => 0.5 - Math.random()).map(item => item.ans);
+        }
+        initRandomDB();
+
+        // ================= LÓGICA ANTITRAMPAS =================
+        document.addEventListener("visibilitychange", () => {
+            if (!examActive || isCheater) return;
+            const warningEl = document.getElementById('cheat-warning');
+
+            if (document.hidden) {
+                lastHiddenTime = Date.now();
+                warningEl.style.display = 'flex';
+            } else {
+                let awayTime = Date.now() - lastHiddenTime;
+                if (awayTime > 5000) {
+                    lockExam();
+                } else {
+                    warningEl.style.display = 'none';
+                }
+            }
+        });
+
+        function lockExam() {
+            isCheater = true;
+            examActive = false;
+            closeModal(); // Cierra el modal si estaba abierto
+            document.getElementById('cheat-warning').innerHTML = `
+                <h1>❌ EXAMEN ANULADO ❌</h1>
+                <p>Saliste de la ventana por más de 5 segundos.</p>
+                <button class="btn-main" style="margin-top:20px; width:250px;" onclick="finishExam(true)">Ver Reporte</button>
+            `;
+        }
+
+        // ================= LÓGICA DEL EXAMEN =================
+        function startExam() {
+            studentName = document.getElementById("student-name").value.trim().toUpperCase();
+            if (studentName === "") { alert("Por favor, ingresa tu nombre."); return; }
+
+            const localKey = "distrib_datos_" + studentName.replace(/\s/g, '');
+            if (localStorage.getItem(localKey)) {
+                alert("Ya presentaste este examen. No se permiten reintentos.");
+                return;
+            }
+
+            localStorage.setItem(localKey, "started");
+            examActive = true;
+            startTime = new Date();
+            
+            document.getElementById("display-name").innerText = "Alumno: " + studentName;
+            document.getElementById("screen-login").classList.remove("active");
+            document.getElementById("screen-quiz").classList.add("active");
+
+            buildInterface();
+        }
+
+        function buildInterface() {
+            const qContainer = document.getElementById("questions-container");
+            qContainer.innerHTML = "";
+
+            currentExamDb.forEach(item => {
+                const row = document.createElement("div");
+                row.className = "question-row";
+                
+                const qText = document.createElement("div");
+                qText.className = "math-q";
+                
+                const spanPre = document.createElement("span");
+                spanPre.innerHTML = `\\(${item.pre}\\)`;
+                
+                const clickZone = document.createElement("div");
+                clickZone.className = "click-zone";
+                clickZone.id = `zone-${item.id}`;
+                clickZone.innerHTML = "➡ Clic para responder";
+                clickZone.setAttribute("data-correct", item.ans);
+                clickZone.onclick = () => openModal(item.id);
+                
+                const spanPost = document.createElement("span");
+                if (item.post !== "") {
+                    spanPost.innerHTML = `${item.post}`;
+                }
+                
+                qText.appendChild(spanPre);
+                qText.appendChild(clickZone);
+                if(item.post !== "") qText.appendChild(spanPost);
+
+                row.appendChild(qText);
+                qContainer.appendChild(row);
+            });
+
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+        }
+
+        // ================= MODAL & LÓGICA DE SELECCIÓN =================
+        function openModal(questionId) {
+            const zone = document.getElementById(`zone-${questionId}`);
+            if (zone.classList.contains("filled")) return; // Si ya fue respondida, no hacer nada
+            
+            currentQuestionIdToAnswer = questionId;
+            const grid = document.getElementById("modal-answers-grid");
+            grid.innerHTML = "";
+            
+            // Renderiza botones con las respuestas restantes
+            availableAnswers.forEach((ans, index) => {
+                const btn = document.createElement("button");
+                btn.className = "answer-btn";
+                btn.innerHTML = `${ans}`;
+                btn.onclick = () => selectAnswer(ans, index);
+                grid.appendChild(btn);
+            });
+            
+            document.getElementById("answer-modal").classList.add("active");
+            // Forzar renderizado de MathJax dentro del modal
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub, grid]);
+        }
+
+        function closeModal() {
+            document.getElementById("answer-modal").classList.remove("active");
+            currentQuestionIdToAnswer = null;
+        }
+
+        function selectAnswer(answerText, answerIndex) {
+            const questionId = currentQuestionIdToAnswer;
+            closeModal();
+            
+            const zone = document.getElementById(`zone-${questionId}`);
+            const correctText = zone.getAttribute("data-correct");
+            
+            // Marcar como respondida
+            zone.classList.add("filled");
+            zone.onclick = null; // Quitar evento click
+            zone.innerHTML = `${answerText}`;
+            
+            // Eliminar la respuesta usada de las disponibles
+            availableAnswers.splice(answerIndex, 1);
+            
+            // Guardar para impresión
+            userAnswers[questionId] = { givenText: answerText };
+
+            // Evaluar y asignar estilos
+            if (answerText === correctText) {
+                zone.classList.add("correct");
+                score++;
+            } else {
+                zone.classList.add("incorrect");
+            }
+
+            placedItems++;
+            document.getElementById("display-progress").innerText = `Aciertos: ${score} / 15`;
+
+            // Actualizar renderizado LaTeX en la zona respondida
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub, zone]);
+
+            // Finalizar si ya se completaron todas
+            if (placedItems === 15) {
+                setTimeout(() => finishExam(false), 1200);
+            }
+        }
+
+        function formatTime(date) { 
+            if(!date) return "--:--:--";
+            return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'}); 
+        }
+
+        function finishExam(dueToCheat) {
+            examActive = false;
+            endTime = new Date();
+            
+            const localKey = "distrib_datos_" + studentName.replace(/\s/g, '');
+            localStorage.setItem(localKey, `score:${score}_cheat:${dueToCheat}`);
+
+            document.getElementById("cheat-warning").style.display = "none";
+            document.getElementById("screen-quiz").classList.remove("active");
+            document.getElementById("screen-results").classList.add("active");
+
+            document.getElementById("final-score").innerText = dueToCheat ? "ANULADO" : `${score} / 15`;
+            document.getElementById("time-summary").innerHTML = `
+                <strong>Inicio:</strong> ${formatTime(startTime)} <br>
+                <strong>Término:</strong> ${formatTime(endTime)}
+            `;
+        }
+
+        // ================= LÓGICA DE IMPRESIÓN =================
+        function printBlank() {
+            let tempName = document.getElementById("student-name").value.trim().toUpperCase() || "_________________________";
+            document.body.className = 'print-blank';
+            buildPrintHTML(tempName, false, true);
+            window.print();
+        }
+
+        function printGraded() {
+            document.body.className = 'print-graded';
+            buildPrintHTML(studentName, isCheater, false);
+            window.print();
+        }
+
+        function buildPrintHTML(name, dueToCheat, isBlank) {
+            const printArea = document.getElementById("print-area");
+            
+            let html = `
+                <div class="print-header">
+                    <h1>Examen: Distribuciones y Datos</h1>
+                    <div class="print-info">
+                        <span>Alumno: ${name}</span>
+                        <span>Aciertos: ${isBlank ? '___ / 15' : (dueToCheat ? '0 (TRAMPA)' : score + ' / 15')}</span>
+                    </div>
+                    <div class="print-info" style="font-weight:normal; margin-top:5px;">
+                        <span>Inicio: ${isBlank ? '__:__:__' : formatTime(startTime)}</span>
+                        <span>Término: ${isBlank ? '__:__:__' : formatTime(endTime)}</span>
+                    </div>
+                </div>
+                <div class="print-questions-grid">
+            `;
+
+            currentExamDb.forEach((q) => {
+                html += `<div class="print-q">`;
+                html += `<span>\\(${q.pre}\\)</span>`;
+                
+                html += `<div class="ans-box"></div>`;
+
+                if (!isBlank) {
+                    const uAns = userAnswers[q.id];
+                    if (!uAns && !dueToCheat) {
+                        html += `<span class="ans-graded wrong">Vacío</span>`;
+                        html += `<span class="ans-graded correction">\\(${q.ans}\\)</span>`;
+                    } else if (dueToCheat) {
+                        html += `<span class="ans-graded wrong">ANULADO</span>`;
+                    } else if (uAns.givenText === q.ans) {
+                        html += `<span class="ans-graded correct">\\(${q.ans}\\)</span>`;
+                    } else {
+                        html += `<span class="ans-graded wrong">\\(${uAns.givenText}\\)</span>`;
+                        html += `<span class="ans-graded correction">\\(${q.ans}\\)</span>`;
+                    }
+                }
+                
+                if (q.post !== "") {
+                    html += `<span>\\(${q.post}\\)</span>`;
+                }
+                html += `</div>`;
+            });
+
+            html += `</div>`;
+            printArea.innerHTML = html;
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub, printArea]);
+        }
+    </script>
+</body>
+</html>
