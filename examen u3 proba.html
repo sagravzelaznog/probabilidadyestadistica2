@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+                <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -56,7 +56,7 @@
         
         .modal-answers-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px; margin-bottom: 20px; padding-right: 5px; }
         
-        .answer-btn { background: var(--kahoot-purple); color: white; padding: 12px 15px; border-radius: 8px; cursor: pointer; text-align: center; font-size: 15px; font-weight: bold; border: none; width: 100%; transition: 0.2s; box-shadow: 0 3px 0 rgba(0,0,0,0.2); }
+        .answer-btn { white-space: normal; line-height: 1.4; background: var(--kahoot-purple); color: white; padding: 12px 15px; border-radius: 8px; cursor: pointer; text-align: center; font-size: 15px; font-weight: bold; border: none; width: 100%; transition: 0.2s; box-shadow: 0 3px 0 rgba(0,0,0,0.2); }
         .answer-btn:hover { filter: brightness(1.15); transform: translateY(-2px); box-shadow: 0 5px 0 rgba(0,0,0,0.2); }
         .answer-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.2); }
 
@@ -131,7 +131,7 @@
         <div id="screen-quiz" class="screen">
             <div class="header">
                 <span id="display-name">Alumno: </span>
-                <span id="display-progress">Aciertos: 0 / 15</span>
+                <span id="display-progress">Aciertos: 0 / 10</span>
             </div>
 
             <div class="exam-container">
@@ -143,7 +143,7 @@
         <div id="screen-results" class="screen">
             <div class="login-box">
                 <h2>Evaluación Finalizada</h2>
-                <h1 id="final-score" style="color: var(--blue); font-size: 48px; margin: 10px 0;">0 / 15</h1>
+                <h1 id="final-score" style="color: var(--blue); font-size: 48px; margin: 10px 0;">0 / 10</h1>
                 <p id="time-summary"></p>
                 <button class="btn-main" style="background: var(--green);" onclick="printGraded()">🖨️ Generar PDF Calificado</button>
             </div>
@@ -222,9 +222,9 @@
         let lastHiddenTime = 0;
         let isCheater = false;
 
-        // ================= SELECCIÓN ALEATORIA DE 15 PREGUNTAS =================
+        // ================= SELECCIÓN ALEATORIA DE 10 PREGUNTAS =================
         function initRandomDB() {
-            // Selecciona 15 al azar y renumera sus incisos del 1 al 10
+            // Selecciona 10 al azar y renumera sus incisos del 1 al 10
             currentExamDb = [...db].sort(() => 0.5 - Math.random()).slice(0, 10).map((item, index) => {
                 let newPre = item.pre.replace(/\\text\{\d+\.\s/, `\\text{${index + 1}. `);
                 return { ...item, originalId: item.id, pre: newPre, id: index + 1 };
@@ -377,13 +377,13 @@
             }
 
             placedItems++;
-            document.getElementById("display-progress").innerText = `Aciertos: ${score} / 15`;
+            document.getElementById("display-progress").innerText = `Aciertos: ${score} / 10`;
 
             // Actualizar renderizado LaTeX en la zona respondida
             MathJax.Hub.Queue(["Typeset", MathJax.Hub, zone]);
 
-            // Finalizar si ya se completaron todas
-            if (placedItems === 15) {
+            // Finalizar si ya se completaron todas (10 preguntas)
+            if (placedItems === 10) {
                 setTimeout(() => finishExam(false), 1200);
             }
         }
@@ -404,7 +404,7 @@
             document.getElementById("screen-quiz").classList.remove("active");
             document.getElementById("screen-results").classList.add("active");
 
-            document.getElementById("final-score").innerText = dueToCheat ? "ANULADO" : `${score} / 15`;
+            document.getElementById("final-score").innerText = dueToCheat ? "ANULADO" : `${score} / 10`;
             document.getElementById("time-summary").innerHTML = `
                 <strong>Inicio:</strong> ${formatTime(startTime)} <br>
                 <strong>Término:</strong> ${formatTime(endTime)}
@@ -433,7 +433,7 @@
                     <h1>Examen: Distribuciones y Datos</h1>
                     <div class="print-info">
                         <span>Alumno: ${name}</span>
-                        <span>Aciertos: ${isBlank ? '___ / 15' : (dueToCheat ? '0 (TRAMPA)' : score + ' / 15')}</span>
+                        <span>Aciertos: ${isBlank ? '___ / 10' : (dueToCheat ? '0 (TRAMPA)' : score + ' / 10')}</span>
                     </div>
                     <div class="print-info" style="font-weight:normal; margin-top:5px;">
                         <span>Inicio: ${isBlank ? '__:__:__' : formatTime(startTime)}</span>
@@ -453,19 +453,19 @@
                     const uAns = userAnswers[q.id];
                     if (!uAns && !dueToCheat) {
                         html += `<span class="ans-graded wrong">Vacío</span>`;
-                        html += `<span class="ans-graded correction">\\(${q.ans}\\)</span>`;
+                        html += `<span class="ans-graded correction">${q.ans}</span>`;
                     } else if (dueToCheat) {
                         html += `<span class="ans-graded wrong">ANULADO</span>`;
                     } else if (uAns.givenText === q.ans) {
-                        html += `<span class="ans-graded correct">\\(${q.ans}\\)</span>`;
+                        html += `<span class="ans-graded correct">${q.ans}</span>`;
                     } else {
-                        html += `<span class="ans-graded wrong">\\(${uAns.givenText}\\)</span>`;
-                        html += `<span class="ans-graded correction">\\(${q.ans}\\)</span>`;
+                        html += `<span class="ans-graded wrong">${uAns.givenText}</span>`;
+                        html += `<span class="ans-graded correction">${q.ans}</span>`;
                     }
                 }
                 
                 if (q.post !== "") {
-                    html += `<span>\\(${q.post}\\)</span>`;
+                    html += `<span>${q.post}</span>`;
                 }
                 html += `</div>`;
             });
